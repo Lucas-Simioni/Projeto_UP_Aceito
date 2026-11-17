@@ -4,6 +4,8 @@ import os
 
 from flask import Flask, render_template, request
 from flask_wtf.csrf import CSRFError
+from sqlalchemy.engine import make_url
+from sqlalchemy.exc import ArgumentError
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from config import CHAVE_DESENVOLVIMENTO, configs, variavel
@@ -19,6 +21,7 @@ def create_app(nome_config: str | None = None) -> Flask:
     app = Flask(__name__)
     app.config.from_object(configs[nome_config])
     _validar_configuracao_producao(app, nome_config)
+    _validar_url_do_banco(app)
     os.makedirs(app.instance_path, exist_ok=True)
 
     db.init_app(app)
@@ -50,6 +53,20 @@ def _validar_configuracao_producao(app: Flask, nome_config: str) -> None:
                            f"(valor aleatório com pelo menos {TAMANHO_MINIMO_CHAVE} caracteres).")
     if not variavel("DATABASE_URL"):
         raise RuntimeError("Defina a variável de ambiente DATABASE_URL em produção.")
+
+
+def _validar_url_do_banco(app: Flask) -> None:
+    """Confere o formato da DATABASE_URL sem nunca mostrar o valor, que contém a senha do banco.
+
+    Sem isto, o SQLAlchemy repete a string inteira na mensagem de erro e a senha vai parar no log.
+    """
+    try:
+        make_url(app.config["SQLALCHEMY_DATABASE_URI"])
+    except ArgumentError:
+        raise RuntimeError(
+            "DATABASE_URL não é um endereço de banco válido. Informe só o endereço, começando com "
+            "postgresql:// — sem o nome da variável, sem aspas e sem comentários."
+        ) from None  # "from None" impede que o erro original (com a senha) apareça no log
 
 
 def _configurar_login(app: Flask) -> None:

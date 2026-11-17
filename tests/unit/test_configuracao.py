@@ -60,6 +60,18 @@ def test_producao_com_credenciais_sobe(monkeypatch):
     assert app.config["SESSION_COOKIE_SECURE"] is True
 
 
+def test_database_url_invalida_nao_vaza_a_senha(monkeypatch, capsys):
+    """Bloco copiado do Neon inteiro (comentário + DATABASE_URL="...") no campo da variável."""
+    colado = '# Postgres\nDATABASE_URL="postgresql://dono:SENHA-SECRETA@host/banco"'
+    monkeypatch.setattr(config.ProductionConfig, "SECRET_KEY", CHAVE_BOA)
+    monkeypatch.setattr(config.ProductionConfig, "SQLALCHEMY_DATABASE_URI", colado)
+    monkeypatch.setenv("DATABASE_URL", colado)
+    with pytest.raises(RuntimeError, match="só o endereço") as erro:
+        create_app("production")
+    assert "SENHA-SECRETA" not in str(erro.value)
+    assert erro.value.__cause__ is None and erro.value.__suppress_context__ is True
+
+
 def test_app_env_invalido(monkeypatch):
     monkeypatch.setenv("APP_ENV", "producao")
     with pytest.raises(RuntimeError, match="APP_ENV"):
