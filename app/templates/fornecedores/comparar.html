@@ -32,7 +32,7 @@
   {% for item in itens %}
     {% set f = item.fornecedor %}
     <article class="cartao oferta{% if item.menor %} oferta-menor{% endif %}{% if f.status == 'DESCARTADO' %} oferta-descartada{% endif %}">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+      <div class="oferta-topo">
         <span class="oferta-posicao">{{ loop.index }}º</span>
         {% if item.menor %}<span class="selo selo-ok">Menor orçamento</span>{% else %}{{ m.selo(f.status_rotulo) }}{% endif %}
       </div>

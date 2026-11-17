@@ -4,42 +4,50 @@
 {% block conteudo %}
 {% set p = painel %}
 
-<section class="saudacao" aria-label="Casamento">
-  <div>
+<section class="convite" aria-label="Casamento">
+  <div class="convite-casal">
     <h1>{{ casamento.nome_casal }}</h1>
-    <p class="local">{{ m.icone('calendario', 'icone-pequeno') }}{{ casamento.data_casamento|data_br }}{% if casamento.local %} · {{ casamento.local }}{% endif %}</p>
+    <p class="convite-data">
+      <span>{{ m.icone('calendario', 'icone-pequeno') }}{{ casamento.data_casamento|data_br }}</span>
+      {% if casamento.local %}<span>{{ m.icone('local', 'icone-pequeno') }}{{ casamento.local }}</span>{% endif %}
+    </p>
   </div>
-  <div class="contagem">
-    {% if p.dias_restantes > 0 %}
+  {% if p.dias_restantes > 0 %}
+    <p class="contagem">
+      <span class="contagem-antes">{{ 'Falta' if p.dias_restantes == 1 else 'Faltam' }}</span>
       <span class="contagem-numero">{{ p.dias_restantes }}</span>
-      <span class="contagem-texto"><strong>{{ 'dia' if p.dias_restantes == 1 else 'dias' }} para o “aceito”</strong><span>{{ 'Falta' if p.dias_restantes == 1 else 'Faltam' }} {{ p.dias_restantes }} {{ 'dia' if p.dias_restantes == 1 else 'dias' }}</span></span>
-    {% elif p.dias_restantes == 0 %}
+      <span class="contagem-texto">{{ 'dia' if p.dias_restantes == 1 else 'dias' }} para o “aceito”</span>
+    </p>
+  {% elif p.dias_restantes == 0 %}
+    <p class="contagem contagem-sem-numero">
       <span class="contagem-numero">{{ m.icone('coracao') }}</span>
-      <span class="contagem-texto"><strong>É hoje!</strong><span>Felicidades ao casal</span></span>
-    {% else %}
+      <span class="contagem-texto"><strong>É hoje!</strong>Felicidades ao casal</span>
+    </p>
+  {% else %}
+    <p class="contagem contagem-sem-numero">
       <span class="contagem-numero">{{ m.icone('check') }}</span>
-      <span class="contagem-texto"><strong>Casamento realizado</strong><span>há {{ -p.dias_restantes }} dias</span></span>
-    {% endif %}
-  </div>
+      <span class="contagem-texto"><strong>Casamento realizado</strong>há {{ -p.dias_restantes }} dias</span>
+    </p>
+  {% endif %}
 </section>
 
-<section class="grade grade-4" aria-label="Resumo financeiro">
-  <div class="cartao indicador">
+<section class="extrato extrato-4" aria-label="Resumo financeiro">
+  <div class="indicador">
     <div class="indicador-rotulo">{{ m.icone('carteira', 'icone-pequeno') }}Orçamento</div>
     <div class="indicador-valor">{{ p.orcamento_total|moeda }}</div>
     <div class="indicador-detalhe">Planejado nas categorias: {{ p.total_planejado|moeda }}</div>
   </div>
-  <div class="cartao indicador">
+  <div class="indicador">
     <div class="indicador-rotulo">{{ m.icone('recibo', 'icone-pequeno') }}Contratado</div>
     <div class="indicador-valor">{{ p.total_contratado|moeda }}</div>
     <div class="indicador-detalhe">Soma das despesas registradas</div>
   </div>
-  <div class="cartao indicador">
+  <div class="indicador">
     <div class="indicador-rotulo">{{ m.icone('check-circulo', 'icone-pequeno') }}Pago</div>
     <div class="indicador-valor">{{ p.total_pago|moeda }}</div>
     <div class="indicador-detalhe">Falta pagar {{ (p.total_contratado - p.total_pago)|moeda }}</div>
   </div>
-  <div class="cartao indicador indicador-destaque{% if p.saldo < 0 %} indicador-negativo{% endif %}">
+  <div class="indicador indicador-destaque{% if p.saldo < 0 %} indicador-negativo{% endif %}">
     <div class="indicador-rotulo">{{ m.icone('moeda', 'icone-pequeno') }}Ainda posso gastar</div>
     <div class="indicador-valor">{{ p.saldo|moeda }}</div>
     <div class="indicador-detalhe">Orçamento menos o contratado</div>

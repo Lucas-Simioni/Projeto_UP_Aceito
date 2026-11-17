@@ -12,25 +12,25 @@
   </div>
 </div>
 
-<section class="grade grade-4" aria-label="Totais do orçamento" style="margin-bottom:16px">
-  <div class="cartao indicador">
+<section class="extrato extrato-4" aria-label="Totais do orçamento">
+  <div class="indicador">
     <div class="indicador-rotulo">Orçamento total</div>
     <div class="indicador-valor">{{ casamento.orcamento_total|moeda }}</div>
     <div class="indicador-detalhe"><a href="{{ url_for('casamento.editar') }}">Alterar</a></div>
   </div>
-  <div class="cartao indicador">
+  <div class="indicador">
     <div class="indicador-rotulo">Planejado</div>
     <div class="indicador-valor">{{ totais.planejado|moeda }}</div>
     <div class="indicador-detalhe">
       {% if totais.nao_alocado >= 0 %}{{ totais.nao_alocado|moeda }} ainda sem categoria{% else %}Acima do orçamento{% endif %}
     </div>
   </div>
-  <div class="cartao indicador">
+  <div class="indicador">
     <div class="indicador-rotulo">Contratado</div>
     <div class="indicador-valor">{{ totais.contratado|moeda }}</div>
     <div class="indicador-detalhe">Pago: {{ totais.pago|moeda }}</div>
   </div>
-  <div class="cartao indicador indicador-destaque{% if casamento.orcamento_total - totais.contratado < 0 %} indicador-negativo{% endif %}">
+  <div class="indicador indicador-destaque{% if casamento.orcamento_total - totais.contratado < 0 %} indicador-negativo{% endif %}">
     <div class="indicador-rotulo">Ainda posso gastar</div>
     <div class="indicador-valor">{{ (casamento.orcamento_total - totais.contratado)|moeda }}</div>
     <div class="indicador-detalhe">Orçamento menos o contratado</div>
@@ -96,5 +96,5 @@
                url_for('categorias.nova'), 'Nova categoria') }}
   {% endif %}
 </div>
-<p class="suave pequeno" style="margin-top:12px">Situação: abaixo de 90% do planejado = dentro do planejado; de 90% a 100% = atenção; acima de 100% = acima do planejado.</p>
+<p class="nota">Situação: abaixo de 90% do planejado = dentro do planejado; de 90% a 100% = atenção; acima de 100% = acima do planejado.</p>
 {% endblock %}

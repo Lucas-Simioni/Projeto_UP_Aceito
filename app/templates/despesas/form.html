@@ -37,7 +37,7 @@
         {{ m.campo(form.primeiro_vencimento, ajuda='As demais vencem no mesmo dia dos meses seguintes.', **travado) }}
       </div>
       {% if despesa and not bloqueada %}
-        <p class="suave pequeno" style="margin-bottom:12px">Se mudar valor, número de parcelas ou primeiro vencimento, as parcelas serão geradas de novo.</p>
+        <p class="formulario-aviso">Se mudar valor, número de parcelas ou primeiro vencimento, as parcelas serão geradas de novo.</p>
       {% endif %}
       <div class="formulario-acoes">
         <button type="submit" class="botao botao-primario">{{ m.icone('check') }}Salvar</button>

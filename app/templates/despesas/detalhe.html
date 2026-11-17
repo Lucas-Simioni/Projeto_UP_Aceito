@@ -19,8 +19,8 @@
   </div>
 </div>
 
-<section class="cartao" aria-label="Resumo da despesa" style="margin-bottom:16px">
-  <dl class="ficha" style="margin:0">
+<section class="cartao secao" aria-label="Resumo da despesa">
+  <dl class="ficha">
     <div><dt>Valor total</dt><dd>{{ despesa.valor_total|moeda }}</dd></div>
     <div><dt>Pago</dt><dd>{{ despesa.total_pago()|moeda }}</dd></div>
     <div><dt>Parcelas pagas</dt><dd>{{ despesa.parcelas_pagas }} de {{ despesa.num_parcelas }}</dd></div>
