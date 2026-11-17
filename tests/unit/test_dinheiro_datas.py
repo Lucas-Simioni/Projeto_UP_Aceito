@@ -23,6 +23,8 @@ from app.services.mensagens import mensagem
     ("0,5", "0.50"),
     ("15", "15.00"),
     ("-10,00", "-10.00"),
+    ("4,", "4.00"),          # vírgula sem centavos (validação com testadores, Q04)
+    ("4000", "4000.00"),
 ])
 def test_interpretar_moeda(texto, esperado):
     assert interpretar_moeda(texto) == Decimal(esperado)

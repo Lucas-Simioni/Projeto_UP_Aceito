@@ -67,6 +67,7 @@ Situações da parcela: **Paga**; **Atrasada** (venceu e não foi paga); **Vence
 
 ## 8. Dicas
 
-- Valores podem ser digitados só com números: o campo formata como `1.234,56`.
+- Valores podem ser digitados como preferir (`4000`, `4.000` ou `4.000,00`): ao sair do campo, ele mostra `4.000,00`.
+- Telefones podem ser digitados só com números; o sistema grava como `(11) 98765-4321`.
 - Toda exclusão pede confirmação.
 - No celular, o menu fica no botão ☰ no canto superior direito.

@@ -36,3 +36,9 @@ MENSAGENS = {
 def mensagem(codigo: str, **valores) -> str:
     """Devolve o texto da mensagem com os campos {…} preenchidos."""
     return MENSAGENS[codigo].format(**valores)
+
+
+def mensagem_exclusao(item: str, feminino: bool = False) -> str:
+    """S04 com concordância de gênero: “Fornecedor X excluído.” / “Despesa “X” excluída.”."""
+    texto = mensagem("S04", item=item)
+    return texto.replace("excluído.", "excluída.") if feminino else texto

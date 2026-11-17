@@ -332,6 +332,11 @@ main { padding: 28px 0 64px; }
   .tabela-responsiva tfoot tr { background: #fcfbf9; }
   .tabela-responsiva tfoot td { background: none; }
   .tabela-responsiva .acoes-linha { justify-content: flex-end; }
+  /* Confirmação do convidado: rótulo em cima e os três botões na largura toda (não vaza do cartão). */
+  .tabela-responsiva td.celula-rsvp { display: block; text-align: left; }
+  .tabela-responsiva td.celula-rsvp::before { display: block; margin-bottom: 6px; }
+  .celula-rsvp .rsvp { display: flex; width: 100%; }
+  .celula-rsvp .rsvp button { flex: 1; padding: 8px 4px; }
 }
 
 /* ---------------------------------------------------------------- listas compactas (painel) */

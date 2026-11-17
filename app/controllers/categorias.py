@@ -7,7 +7,7 @@ from app.services import categorias as servico
 from app.services import orcamento
 from app.services.dinheiro import somar
 from app.services.erros import RegraNegocioErro
-from app.services.mensagens import mensagem
+from app.services.mensagens import mensagem, mensagem_exclusao
 
 bp = Blueprint("categorias", __name__, url_prefix="/orcamento")
 
@@ -70,5 +70,5 @@ def excluir(categoria_id):
         except RegraNegocioErro as erro:
             flash(erro.mensagem, "erro")
         else:
-            flash(mensagem("S04", item=f"Categoria {nome}"), "sucesso")
+            flash(mensagem_exclusao(f"Categoria {nome}", feminino=True), "sucesso")
     return redirect(url_for("categorias.lista"))

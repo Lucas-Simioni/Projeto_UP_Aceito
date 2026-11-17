@@ -6,7 +6,7 @@ CENTAVO = Decimal("0.01")
 ZERO = Decimal("0.00")
 
 _SOMENTE_MILHAR = re.compile(r"-?\d{1,3}(\.\d{3})+")
-_NUMERO = re.compile(r"-?\d+(\.\d{1,2})?")
+_NUMERO = re.compile(r"-?\d+(\.\d{0,2})?")  # "4," (vírgula sem centavos) vale 4,00
 
 
 def quantizar(valor) -> Decimal:

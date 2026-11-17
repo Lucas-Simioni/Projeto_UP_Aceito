@@ -58,11 +58,11 @@ Acesse <http://127.0.0.1:5000>.
 ## Testes
 
 ```bash
-pytest                                        # 154 testes (unitários e de integração)
+pytest                                        # 168 testes (unitários e de integração)
 pytest --cov=app/services --cov-report=term   # cobertura da camada de regras de negócio
 ```
 
-Resultado atual: **154 testes passando**, cobertura de **97% em `app/services`** (mínimo exigido: 80%, RNF11). Relatórios em [`docs/situacao-2-desenvolvimento/testes/`](docs/situacao-2-desenvolvimento/testes/).
+Resultado atual: **168 testes passando**, cobertura de **98% em `app/services`** (mínimo exigido: 80%, RNF11). Relatórios em [`docs/situacao-2-desenvolvimento/testes/`](docs/situacao-2-desenvolvimento/testes/).
 
 ## Publicação (Render + Neon/Supabase)
 

@@ -67,7 +67,7 @@
             <a id="nextFileLink" class="nav" href="z_b282c0f142a3ac40_comum_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.17.3">coverage.py v7.17.3</a>,
-            created at 2026-11-17 11:09 -0300
+            created at 2026-11-17 13:28 -0300
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -91,7 +91,7 @@
     <p class="run"><span class="n"><a id="t7" href="#t7">7</a></span><span class="t"><span class="key">from</span> <span class="nam">app</span><span class="op">.</span><span class="nam">services</span> <span class="key">import</span> <span class="nam">orcamento</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t8" href="#t8">8</a></span><span class="t"><span class="key">from</span> <span class="nam">app</span><span class="op">.</span><span class="nam">services</span><span class="op">.</span><span class="nam">dinheiro</span> <span class="key">import</span> <span class="nam">somar</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t9" href="#t9">9</a></span><span class="t"><span class="key">from</span> <span class="nam">app</span><span class="op">.</span><span class="nam">services</span><span class="op">.</span><span class="nam">erros</span> <span class="key">import</span> <span class="nam">RegraNegocioErro</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t10" href="#t10">10</a></span><span class="t"><span class="key">from</span> <span class="nam">app</span><span class="op">.</span><span class="nam">services</span><span class="op">.</span><span class="nam">mensagens</span> <span class="key">import</span> <span class="nam">mensagem</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t10" href="#t10">10</a></span><span class="t"><span class="key">from</span> <span class="nam">app</span><span class="op">.</span><span class="nam">services</span><span class="op">.</span><span class="nam">mensagens</span> <span class="key">import</span> <span class="nam">mensagem</span><span class="op">,</span> <span class="nam">mensagem_exclusao</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t11" href="#t11">11</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t12" href="#t12">12</a></span><span class="t"><span class="nam">bp</span> <span class="op">=</span> <span class="nam">Blueprint</span><span class="op">(</span><span class="str">&quot;categorias&quot;</span><span class="op">,</span> <span class="nam">__name__</span><span class="op">,</span> <span class="nam">url_prefix</span><span class="op">=</span><span class="str">&quot;/orcamento&quot;</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t13" href="#t13">13</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -154,7 +154,7 @@
     <p class="run"><span class="n"><a id="t70" href="#t70">70</a></span><span class="t">        <span class="key">except</span> <span class="nam">RegraNegocioErro</span> <span class="key">as</span> <span class="nam">erro</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t71" href="#t71">71</a></span><span class="t">            <span class="nam">flash</span><span class="op">(</span><span class="nam">erro</span><span class="op">.</span><span class="nam">mensagem</span><span class="op">,</span> <span class="str">&quot;erro&quot;</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t72" href="#t72">72</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t73" href="#t73">73</a></span><span class="t">            <span class="nam">flash</span><span class="op">(</span><span class="nam">mensagem</span><span class="op">(</span><span class="str">&quot;S04&quot;</span><span class="op">,</span> <span class="nam">item</span><span class="op">=</span><span class="fst">f&quot;</span><span class="fst">Categoria </span><span class="op">{</span><span class="nam">nome</span><span class="op">}</span><span class="fst">&quot;</span><span class="op">)</span><span class="op">,</span> <span class="str">&quot;sucesso&quot;</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t73" href="#t73">73</a></span><span class="t">            <span class="nam">flash</span><span class="op">(</span><span class="nam">mensagem_exclusao</span><span class="op">(</span><span class="fst">f&quot;</span><span class="fst">Categoria </span><span class="op">{</span><span class="nam">nome</span><span class="op">}</span><span class="fst">&quot;</span><span class="op">,</span> <span class="nam">feminino</span><span class="op">=</span><span class="key">True</span><span class="op">)</span><span class="op">,</span> <span class="str">&quot;sucesso&quot;</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t74" href="#t74">74</a></span><span class="t">    <span class="key">return</span> <span class="nam">redirect</span><span class="op">(</span><span class="nam">url_for</span><span class="op">(</span><span class="str">&quot;categorias.lista&quot;</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
@@ -165,7 +165,7 @@
             <a class="nav" href="z_b282c0f142a3ac40_comum_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.17.3">coverage.py v7.17.3</a>,
-            created at 2026-11-17 11:09 -0300
+            created at 2026-11-17 13:28 -0300
         </p>
     </div>
 </footer>

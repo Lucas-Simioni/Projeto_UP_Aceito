@@ -25,7 +25,7 @@ def test_crud_de_categoria(logado, casal):
     assert db.session.get(Categoria, nova.id).valor_planejado == Decimal("0.00")
 
     html = logado.post(f"/orcamento/{nova.id}/excluir", follow_redirects=True).get_data(as_text=True)
-    assert "Categoria Viagem excluído." in html
+    assert "Categoria Viagem excluída." in html
     assert db.session.get(Categoria, nova.id) is None
 
 
@@ -61,7 +61,7 @@ def test_crud_de_fornecedor(logado, casal):
     assert fornecedor.valor_orcado == Decimal("5200.00") and fornecedor.telefone == "(11) 98765-4321"
 
     html = logado.post(f"/fornecedores/{fornecedor.id}/editar", data={
-        "categoria_id": foto.id, "nome": "Estúdio Luz", "telefone": "11987654321", "email": "invalido",
+        "categoria_id": foto.id, "nome": "Estúdio Luz", "telefone": "98765-432", "email": "invalido",
         "status": "ORCAMENTO",
     }).get_data(as_text=True)
     assert "Use o formato (99) 99999-9999." in html and "Informe um e-mail válido." in html

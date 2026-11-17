@@ -102,7 +102,7 @@ def test_excluir_despesa_apaga_parcelas(logado, casal):
     """Composição: as parcelas são excluídas junto com a despesa (CASCADE)."""
     despesa = criar_despesa(casal, categoria(casal))
     html = logado.post(f"/despesas/{despesa.id}/excluir", follow_redirects=True).get_data(as_text=True)
-    assert "excluído" in html
+    assert "Despesa “Despesa teste” excluída." in html
     assert db.session.scalar(db.select(db.func.count(Parcela.id))) == 0
 
 

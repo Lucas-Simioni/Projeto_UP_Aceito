@@ -100,20 +100,26 @@
     select.addEventListener("change", () => select.form.submit())
   );
 
-  /* ---------------------------------------------------------------- máscara de valores R$ 1.234,56 */
-  function formatarCentavos(digitos) {
-    digitos = digitos.replace(/\D/g, "").replace(/^0+(?=\d)/, "");
-    if (!digitos) return "";
-    while (digitos.length < 3) digitos = "0" + digitos;
-    const inteiro = digitos.slice(0, -2).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    return inteiro + "," + digitos.slice(-2);
+  /* ---------------------------------------------------------------- valores em reais: 1.234,56 */
+  // A pessoa digita como preferir ("4000", "4.000", "4000,5", "4.000,00"); ao sair do campo o valor
+  // é mostrado como 4.000,00. A leitura segue a mesma regra do servidor (interpretar_moeda).
+  function formatarMoeda(texto) {
+    let limpo = texto.replace(/R\$/g, "").replace(/\s/g, "");
+    if (!limpo) return "";
+    if (limpo.includes(",")) limpo = limpo.replace(/\./g, "").replace(",", ".");
+    else if (/^\d{1,3}(\.\d{3})+$/.test(limpo)) limpo = limpo.replace(/\./g, "");
+    const partes = /^(\d+)(?:\.(\d{0,2}))?$/.exec(limpo);
+    if (!partes) return texto; // inválido: deixa como está e o servidor explica o erro
+    const inteiro = partes[1].replace(/^0+(?=\d)/, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return inteiro + "," + (partes[2] || "").padEnd(2, "0");
   }
   $$("input[data-moeda]").forEach((campo) => {
     if (campo.readOnly) return;
     campo.addEventListener("input", () => {
-      campo.value = formatarCentavos(campo.value);
-      campo.setSelectionRange(campo.value.length, campo.value.length);
+      const filtrado = campo.value.replace(/[^\d.,]/g, "");
+      if (filtrado !== campo.value) campo.value = filtrado;
     });
+    campo.addEventListener("blur", () => { campo.value = formatarMoeda(campo.value); });
   });
 
   /* ---------------------------------------------------------------- máscara de telefone */
@@ -198,7 +204,7 @@
             `<li class="${p.apos_casamento ? "apos" : ""}"><span>${p.numero}ª · ${escapar(p.vencimento)}${p.apos_casamento ? " · após o casamento" : ""}</span><strong>${escapar(p.valor)}</strong></li>`
           ).join("")}</ul>` +
           (apos ? `<p class="previa-vazia" style="padding:12px 20px;color:var(--atencao-texto)">${apos} parcela(s) vencem depois da data do casamento.</p>` : "") +
-          `<div class="previa-total"><span>${dados.parcelas.length}x</span><span>Total ${escapar("R$ " + valor.value)}</span></div>`;
+          `<div class="previa-total"><span>${dados.parcelas.length}x</span><span>Total ${escapar(dados.total)}</span></div>`;
       } catch (erro) {
         ultimaConsulta = "";
       }

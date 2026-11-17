@@ -1,10 +1,10 @@
 """Formulários de cadastro: casamento, categoria, fornecedor, despesa, pagamento e convidado."""
 from flask_wtf import FlaskForm
-from wtforms import DateField, IntegerField, SelectField, StringField, TextAreaField
+from wtforms import DateField, SelectField, StringField, TextAreaField
 from wtforms.validators import Length, NumberRange, Optional
 
-from app.forms.base import (FILTROS_TEXTO, FormularioBase, MoedaField, Obrigatorio, email_opcional,
-                            telefone_opcional)
+from app.forms.base import (FILTROS_TELEFONE, FILTROS_TEXTO, FormularioBase, InteiroField, MoedaField,
+                            Obrigatorio, email_opcional, telefone_opcional)
 from app.models.dominios import Grupo, StatusFornecedor
 from app.services.mensagens import mensagem
 
@@ -23,7 +23,7 @@ class CasamentoForm(FormularioBase):
     local = StringField("Local", validators=[Optional(), Length(max=150)],
                         description="Cerimônia ou festa.")
     orcamento_total = MoedaField("Orçamento total (R$)", validators=[Obrigatorio()])
-    convidados_estimados = IntegerField("Convidados estimados", validators=[
+    convidados_estimados = InteiroField("Convidados estimados", validators=[
         Optional(), NumberRange(min=0, message="Informe um número igual ou maior que zero."),
     ], description="Só como referência.")
 
@@ -38,7 +38,7 @@ class FornecedorForm(FormularioBase):
     categoria_id = SelectField("Categoria", coerce=_inteiro_ou_none, validators=[Obrigatorio()],
                                validate_choice=False)
     nome = StringField("Nome do fornecedor", validators=[Obrigatorio(), Length(max=120)])
-    telefone = StringField("Telefone", validators=telefone_opcional(), filters=FILTROS_TEXTO)
+    telefone = StringField("Telefone", validators=telefone_opcional(), filters=FILTROS_TELEFONE)
     email = StringField("E-mail", validators=email_opcional(), filters=FILTROS_TEXTO)
     valor_orcado = MoedaField("Valor orçado (R$)", validators=[Optional()])
     status = SelectField("Status", choices=StatusFornecedor.escolhas(), default=StatusFornecedor.ORCAMENTO)
@@ -58,7 +58,7 @@ class DespesaForm(FormularioBase):
                             description="Ex.: Buffet completo para 150 pessoas")
     valor_total = MoedaField("Valor total (R$)", validators=[Obrigatorio()])
     data_contratacao = DateField("Data da contratação", validators=[Obrigatorio()])
-    num_parcelas = IntegerField("Número de parcelas", default=1, validators=[
+    num_parcelas = InteiroField("Número de parcelas", default=1, validators=[
         Obrigatorio(), NumberRange(min=1, max=24, message=mensagem("E13")),
     ])
     primeiro_vencimento = DateField("Primeiro vencimento", validators=[Obrigatorio()])
@@ -71,9 +71,10 @@ class PagamentoForm(FormularioBase):
 class ConvidadoForm(FormularioBase):
     nome = StringField("Nome", validators=[Obrigatorio(), Length(max=120)])
     grupo = SelectField("Grupo", choices=Grupo.escolhas(), default=Grupo.OUTROS)
-    telefone = StringField("Telefone", validators=telefone_opcional(), filters=FILTROS_TEXTO)
+    telefone = StringField("Telefone", validators=telefone_opcional(), filters=FILTROS_TELEFONE)
     email = StringField("E-mail", validators=email_opcional(), filters=FILTROS_TEXTO)
-    acompanhantes = IntegerField("Acompanhantes", default=0, validators=[
+    # Campo apagado conta como 0 acompanhantes (padrão do dicionário de dados).
+    acompanhantes = InteiroField("Acompanhantes", default=0, vazio=0, validators=[
         Obrigatorio(), NumberRange(min=0, max=10, message=mensagem("E09")),
     ], description="De 0 a 10 pessoas além do convidado.")
 

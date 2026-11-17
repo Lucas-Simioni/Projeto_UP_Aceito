@@ -8,8 +8,8 @@
 
 ## Resultado (17/11/2026)
 
-- **154 testes, todos passando** (unitários e de integração).
-- Cobertura da camada de serviços (`app/services`): **97%** — meta do RNF11: 80%.
+- **168 testes, todos passando** (unitários e de integração), incluindo os das correções da validação simulada (`tests/integration/test_validacao_usuarios.py`, ver `docs/situacao-3-validacao/laudo-de-qualidade.md`).
+- Cobertura da camada de serviços (`app/services`): **98%** — meta do RNF11: 80%.
 - Cobertura da aplicação inteira (`app`): 97%.
 
 ## Como gerar de novo
@@ -31,3 +31,4 @@ pytest --cov=app/services --cov-report=term      # critério do RNF11
 | TI01–TI07 | `tests/integration/test_cenarios_ti.py` |
 | RNF06–RNF08 (segurança e isolamento) | `tests/integration/test_auth_seguranca.py` |
 | RNF09 (500 convidados, 200 parcelas, < 2 s) | `tests/integration/test_desempenho_comandos.py` |
+| Q01–Q04 (laudo de qualidade, rodada 0) | `tests/integration/test_validacao_usuarios.py` |

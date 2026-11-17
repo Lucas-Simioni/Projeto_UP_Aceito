@@ -80,8 +80,8 @@
             {% if c.telefone or c.email %}<span class="secundario">{{ [c.telefone, c.email]|select|join(' · ') }}</span>{% endif %}
           </td>
           <td data-rotulo="Grupo">{{ c.grupo_rotulo }}</td>
-          <td data-rotulo="Pessoas">{{ c.total_pessoas() }}{% if c.acompanhantes %} <span class="apagado pequeno">(+{{ c.acompanhantes }})</span>{% endif %}</td>
-          <td data-rotulo="Confirmação">
+          <td data-rotulo="Pessoas"><span>{{ c.total_pessoas() }}{% if c.acompanhantes %} <span class="apagado pequeno">(+{{ c.acompanhantes }})</span>{% endif %}</span></td>
+          <td data-rotulo="Confirmação" class="celula-rsvp">
             <div class="rsvp" role="group" aria-label="Confirmação de {{ c.nome }}">
               <form method="post" action="{{ url_for('convidados.rsvp', convidado_id=c.id) }}">
                 {{ form_acao.csrf_token }}

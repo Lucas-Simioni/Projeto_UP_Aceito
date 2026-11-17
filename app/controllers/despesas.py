@@ -12,7 +12,7 @@ from app.services import datas
 from app.services import despesas as servico
 from app.services.dinheiro import formatar_moeda, interpretar_moeda, somar
 from app.services.erros import RegraNegocioErro
-from app.services.mensagens import mensagem
+from app.services.mensagens import mensagem, mensagem_exclusao
 
 bp = Blueprint("despesas", __name__, url_prefix="/despesas")
 
@@ -123,7 +123,7 @@ def excluir(despesa_id):
         except RegraNegocioErro as erro:
             flash(erro.mensagem, "erro")
             return redirect(url_for("despesas.detalhe", despesa_id=despesa_id))
-        flash(mensagem("S04", item=f"Despesa “{descricao}”"), "sucesso")
+        flash(mensagem_exclusao(f"Despesa “{descricao}”", feminino=True), "sucesso")
     return redirect(url_for("despesas.lista"))
 
 
@@ -141,7 +141,7 @@ def previa():
     except ValueError:
         return jsonify(ok=False, erro=None)
     data_casamento = g.casamento.data_casamento
-    return jsonify(ok=True, parcelas=[
+    return jsonify(ok=True, total=formatar_moeda(valor), parcelas=[
         {
             "numero": p.numero,
             "valor": formatar_moeda(p.valor),
