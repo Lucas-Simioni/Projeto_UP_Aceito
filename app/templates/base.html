@@ -5,12 +5,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Aceito! — orçamento, fornecedores, parcelas e convidados do seu casamento num só lugar.">
-  <meta name="theme-color" content="#5E7D63">
+  <meta name="theme-color" content="#4F6B55">
   <title>{% block titulo %}{% endblock %} · Aceito!</title>
+  {# Marca que há JavaScript antes de desenhar a página: só então o menu do celular recolhe. #}
+  <script>document.documentElement.classList.add("js");</script>
   <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg') }}" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
   {% block cabeca %}{% endblock %}
 </head>

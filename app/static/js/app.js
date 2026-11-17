@@ -203,7 +203,7 @@
           `<ul class="previa-lista">${dados.parcelas.map((p) =>
             `<li class="${p.apos_casamento ? "apos" : ""}"><span>${p.numero}ª · ${escapar(p.vencimento)}${p.apos_casamento ? " · após o casamento" : ""}</span><strong>${escapar(p.valor)}</strong></li>`
           ).join("")}</ul>` +
-          (apos ? `<p class="previa-vazia" style="padding:12px 20px;color:var(--atencao-texto)">${apos} parcela(s) vencem depois da data do casamento.</p>` : "") +
+          (apos ? `<p class="previa-aviso">${apos} parcela(s) vencem depois da data do casamento.</p>` : "") +
           `<div class="previa-total"><span>${dados.parcelas.length}x</span><span>Total ${escapar(dados.total)}</span></div>`;
       } catch (erro) {
         ultimaConsulta = "";
