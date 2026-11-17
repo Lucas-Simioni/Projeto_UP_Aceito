@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block titulo %}Meu casamento{% endblock %}
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    {% if primeiro_acesso %}
+      <h1>Vamos começar pelo casamento</h1>
+      <p>Com esses dados montamos o painel e oito categorias de gasto para vocês ajustarem depois.</p>
+    {% else %}
+      <h1>Meu casamento</h1>
+      <p>Dados gerais do evento. O orçamento total é a base de todos os alertas.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="cartao formulario">
+  <form method="post" class="cartao-corpo" novalidate>
+    {{ form.csrf_token }}
+    {{ m.campo(form.nome_casal, autofocus=primeiro_acesso) }}
+    <div class="campos-linha">
+      {{ m.campo(form.data_casamento) }}
+      {{ m.campo(form.orcamento_total, moeda=True) }}
+    </div>
+    <div class="campos-linha">
+      {{ m.campo(form.local, opcional=True, ajuda='Cerimônia ou festa.') }}
+      {{ m.campo(form.convidados_estimados, opcional=True, ajuda='Só como referência.', min=0, inputmode='numeric') }}
+    </div>
+    <div class="formulario-acoes">
+      <button type="submit" class="botao botao-primario">{{ m.icone('check') }}{{ 'Começar a planejar' if primeiro_acesso else 'Salvar' }}</button>
+      {% if not primeiro_acesso %}<a class="botao botao-texto" href="{{ url_for('painel.index') }}">Cancelar</a>{% endif %}
+    </div>
+  </form>
+</div>
+{% endblock %}

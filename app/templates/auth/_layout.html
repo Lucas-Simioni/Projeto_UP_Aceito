@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block corpo %}
+<div class="acesso">
+  <aside class="acesso-lado" aria-hidden="true">
+    <span class="marca"><span class="marca-simbolo">{{ m.icone('aneis') }}</span><span>Aceito<em>!</em></span></span>
+    <div>
+      <h2>O casamento dos sonhos cabe no orçamento quando tudo está num só lugar.</h2>
+      <ul>
+        <li>{{ m.icone('carteira') }}<span>Saiba a qualquer momento quanto foi planejado, contratado e pago.</span></li>
+        <li>{{ m.icone('calendario') }}<span>Parcelas organizadas e aviso do que vence nos próximos dias.</span></li>
+        <li>{{ m.icone('pessoas') }}<span>Lista de convidados com confirmações e custo por pessoa.</span></li>
+      </ul>
+    </div>
+    <small>Feito para casais que querem tranquilidade até o “aceito”.</small>
+  </aside>
+  <main class="acesso-principal" id="conteudo">
+    <div class="acesso-caixa">
+      <span class="marca"><span class="marca-simbolo">{{ m.icone('aneis') }}</span><span>Aceito<em>!</em></span></span>
+      {% include '_mensagens.html' %}
+      {% block conteudo %}{% endblock %}
+    </div>
+  </main>
+</div>
+{% endblock %}

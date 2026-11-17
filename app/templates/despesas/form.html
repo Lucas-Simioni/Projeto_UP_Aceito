@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block titulo %}{{ 'Editar despesa' if despesa else 'Nova despesa' }}{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{{ url_for('despesas.detalhe', despesa_id=despesa.id) if despesa else url_for('despesas.lista') }}">{{ m.icone('voltar', 'icone-pequeno') }}{{ 'Despesa' if despesa else 'Despesas' }}</a>
+<div class="cabecalho-pagina">
+  <div>
+    <h1>{{ 'Editar despesa' if despesa else 'Nova despesa' }}</h1>
+    <p>Informe o valor total e o número de parcelas: o Aceito! calcula valores e vencimentos.</p>
+  </div>
+</div>
+
+{% if bloqueada %}
+<div class="alertas">
+  <div class="alerta alerta-info">{{ m.icone('info') }}<span class="alerta-texto">Esta despesa tem parcelas pagas: só descrição, categoria e fornecedor podem mudar. Para alterar valor ou parcelas, estorne os pagamentos antes.</span></div>
+</div>
+{% endif %}
+
+{% set travado = {'readonly': True} if bloqueada else {} %}
+<form method="post" novalidate class="layout-despesa" data-form-despesa
+      data-previa-url="{{ url_for('despesas.previa') }}"
+      data-fornecedores='{{ categoria_por_fornecedor|tojson }}'>
+  <div class="cartao">
+    <div class="cartao-corpo">
+      {{ form.csrf_token }}
+      <div class="campos-linha">
+        {{ m.campo(form.categoria_id) }}
+        {{ m.campo(form.fornecedor_id, opcional=True, ajuda='Deixe em branco para compras avulsas.') }}
+      </div>
+      {{ m.campo(form.descricao, autofocus=not despesa) }}
+      <div class="campos-linha">
+        {{ m.campo(form.valor_total, moeda=True, **travado) }}
+        {{ m.campo(form.data_contratacao, **travado) }}
+      </div>
+      <div class="campos-linha">
+        {{ m.campo(form.num_parcelas, ajuda='De 1 a 24.', min=1, max=24, inputmode='numeric', **travado) }}
+        {{ m.campo(form.primeiro_vencimento, ajuda='As demais vencem no mesmo dia dos meses seguintes.', **travado) }}
+      </div>
+      {% if despesa and not bloqueada %}
+        <p class="suave pequeno" style="margin-bottom:12px">Se mudar valor, número de parcelas ou primeiro vencimento, as parcelas serão geradas de novo.</p>
+      {% endif %}
+      <div class="formulario-acoes">
+        <button type="submit" class="botao botao-primario">{{ m.icone('check') }}Salvar</button>
+        <a class="botao botao-texto" href="{{ url_for('despesas.detalhe', despesa_id=despesa.id) if despesa else url_for('despesas.lista') }}">Cancelar</a>
+      </div>
+    </div>
+  </div>
+
+  <aside class="cartao previa" aria-labelledby="titulo-previa" aria-live="polite">
+    <div class="cartao-cabecalho"><h2 id="titulo-previa">Parcelas calculadas</h2></div>
+    <div data-previa-conteudo>
+      {% if despesa %}
+        <ul class="previa-lista">
+          {% for p in despesa.parcelas %}
+            <li class="{{ 'apos' if p.data_vencimento > despesa.categoria.casamento.data_casamento }}"><span>{{ p.numero }}ª · {{ p.data_vencimento|data_br }}</span><strong>{{ p.valor|moeda }}</strong></li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="previa-vazia">Preencha valor, parcelas e primeiro vencimento para ver a divisão antes de salvar.</p>
+      {% endif %}
+    </div>
+  </aside>
+</form>
+{% endblock %}

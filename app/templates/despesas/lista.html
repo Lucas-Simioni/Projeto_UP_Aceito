@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block titulo %}Despesas{% endblock %}
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <h1>Despesas</h1>
+    <p>Contratos e compras, com as parcelas pagas de cada um. Total contratado: <strong class="numero">{{ total|moeda }}</strong></p>
+  </div>
+  <div class="acoes">
+    <a class="botao botao-primario" href="{{ url_for('despesas.nova', categoria=filtro_categoria) }}">{{ m.icone('mais') }}Nova despesa</a>
+  </div>
+</div>
+
+<form class="barra-filtros" method="get" data-autoenvio>
+  <div class="campo">
+    <label for="filtro-categoria">Categoria</label>
+    <select id="filtro-categoria" name="categoria">
+      <option value="">Todas</option>
+      {% for c in categorias %}<option value="{{ c.id }}"{% if c.id == filtro_categoria %} selected{% endif %}>{{ c.nome }}</option>{% endfor %}
+    </select>
+  </div>
+  <noscript><button class="botao botao-secundario" type="submit">Filtrar</button></noscript>
+</form>
+
+{% if grupos %}
+  {% for categoria, despesas, subtotal in grupos %}
+  <section class="cartao grupo" aria-labelledby="grupo-{{ categoria.id }}">
+    <div class="cartao-cabecalho grupo-cabecalho">
+      <h2 id="grupo-{{ categoria.id }}">{{ categoria.nome }}</h2>
+      <span class="numero suave">{{ subtotal|moeda }}</span>
+    </div>
+    <div class="tabela-envoltorio">
+      <table class="tabela tabela-responsiva">
+        <thead>
+          <tr>
+            <th scope="col">Despesa</th>
+            <th scope="col">Contratação</th>
+            <th scope="col" class="num">Valor</th>
+            <th scope="col">Parcelas pagas</th>
+            <th scope="col">Situação</th>
+            <th scope="col"><span class="sr-only">Ações</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for d in despesas %}
+          <tr>
+            <td class="celula-titulo">
+              <a class="principal" href="{{ url_for('despesas.detalhe', despesa_id=d.id) }}">{{ d.descricao }}</a>
+              <span class="secundario">{{ d.fornecedor.nome if d.fornecedor else 'Sem fornecedor' }}</span>
+            </td>
+            <td data-rotulo="Contratação">{{ d.data_contratacao|data_br }}</td>
+            <td class="num" data-rotulo="Valor">{{ d.valor_total|moeda }}</td>
+            <td data-rotulo="Parcelas pagas">{{ d.parcelas_pagas }} de {{ d.num_parcelas }}</td>
+            <td data-rotulo="Situação">{{ m.selo(d.situacao(hoje)) }}</td>
+            <td data-rotulo="Ações">
+              <div class="acoes-linha">
+                <a class="botao-icone" href="{{ url_for('despesas.detalhe', despesa_id=d.id) }}" title="Ver parcelas" aria-label="Ver parcelas de {{ d.descricao }}">{{ m.icone('olho') }}</a>
+                <a class="botao-icone" href="{{ url_for('despesas.editar', despesa_id=d.id) }}" title="Editar" aria-label="Editar {{ d.descricao }}">{{ m.icone('editar') }}</a>
+                {{ m.botao_excluir(url_for('despesas.excluir', despesa_id=d.id), 'a despesa “' ~ d.descricao ~ '”') }}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+  {% endfor %}
+{% elif filtro_categoria %}
+  <div class="cartao">{{ m.vazio('recibo', 'Nenhuma despesa nesta categoria', 'Registre um contrato ou compra desta categoria.', url_for('despesas.nova', categoria=filtro_categoria), 'Nova despesa') }}</div>
+{% else %}
+  <div class="cartao">{{ m.vazio('recibo', 'Nenhuma despesa registrada',
+       'Registre contratos e compras: o Aceito! divide o valor em parcelas e avisa os vencimentos.',
+       url_for('despesas.nova'), 'Nova despesa') }}</div>
+{% endif %}
+{% endblock %}

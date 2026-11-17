@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block titulo %}{{ 'Editar categoria' if categoria else 'Nova categoria' }}{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{{ url_for('categorias.lista') }}">{{ m.icone('voltar', 'icone-pequeno') }}Orçamento</a>
+<div class="cabecalho-pagina">
+  <div>
+    <h1>{{ 'Editar categoria' if categoria else 'Nova categoria' }}</h1>
+    <p>O valor planejado é quanto vocês pretendem gastar nesta categoria.</p>
+  </div>
+</div>
+<div class="cartao formulario">
+  <form method="post" class="cartao-corpo" novalidate>
+    {{ form.csrf_token }}
+    {{ m.campo(form.nome, autofocus=not categoria) }}
+    {{ m.campo(form.valor_planejado, moeda=True, autofocus=categoria is not none) }}
+    <div class="formulario-acoes">
+      <button type="submit" class="botao botao-primario">{{ m.icone('check') }}Salvar</button>
+      <a class="botao botao-texto" href="{{ url_for('categorias.lista') }}">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

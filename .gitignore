@@ -1,0 +1,20 @@
+# Ambiente e segredos
+.venv/
+venv/
+.env
+
+# Banco local de desenvolvimento
+instance/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editores e sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

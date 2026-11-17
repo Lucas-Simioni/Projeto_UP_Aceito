@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block titulo %}Registrar pagamento{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{{ voltar }}">{{ m.icone('voltar', 'icone-pequeno') }}Voltar</a>
+<div class="cabecalho-pagina">
+  <div>
+    <h1>Registrar pagamento</h1>
+    <p>{{ parcela.despesa.descricao }} — parcela {{ parcela.numero }} de {{ parcela.despesa.num_parcelas }}</p>
+  </div>
+</div>
+<div class="cartao formulario">
+  <form method="post" class="cartao-corpo" novalidate>
+    {{ form.csrf_token }}
+    <input type="hidden" name="proximo" value="{{ voltar }}">
+    <dl class="ficha" style="margin:0 0 20px;grid-template-columns:repeat(3,minmax(0,1fr))">
+      <div><dt>Valor</dt><dd>{{ parcela.valor|moeda }}</dd></div>
+      <div><dt>Vencimento</dt><dd>{{ parcela.data_vencimento|data_br }}</dd></div>
+      <div><dt>Situação</dt><dd>{{ m.selo(parcela.situacao(hoje)) }}</dd></div>
+    </dl>
+    {{ m.campo(form.data_pagamento, ajuda='Não pode ser futura nem anterior à data de contratação (' ~ (parcela.despesa.data_contratacao|data_br) ~ ').',
+               max=hoje.isoformat(), min=parcela.despesa.data_contratacao.isoformat(), autofocus=True) }}
+    <div class="formulario-acoes">
+      <button type="submit" class="botao botao-primario">{{ m.icone('check') }}Confirmar pagamento</button>
+      <a class="botao botao-texto" href="{{ voltar }}">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

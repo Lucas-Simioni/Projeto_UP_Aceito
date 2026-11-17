@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block titulo %}{{ 'Editar fornecedor' if fornecedor else 'Novo fornecedor' }}{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{{ url_for('fornecedores.lista') }}">{{ m.icone('voltar', 'icone-pequeno') }}Fornecedores</a>
+<div class="cabecalho-pagina">
+  <div>
+    <h1>{{ 'Editar fornecedor' if fornecedor else 'Novo fornecedor' }}</h1>
+    <p>Ao registrar uma despesa para um fornecedor em orçamento, ele passa a contratado automaticamente.</p>
+  </div>
+</div>
+<div class="cartao formulario">
+  <form method="post" class="cartao-corpo" novalidate>
+    {{ form.csrf_token }}
+    {{ m.campo(form.nome, autofocus=not fornecedor) }}
+    <div class="campos-linha">
+      {{ m.campo(form.categoria_id) }}
+      {{ m.campo(form.status) }}
+    </div>
+    {{ m.campo(form.valor_orcado, moeda=True, opcional=True, ajuda='Valor do orçamento recebido.') }}
+    <div class="campos-linha">
+      {{ m.campo(form.telefone, opcional=True, ajuda='(99) 99999-9999', type='tel', autocomplete='tel', **{'data-telefone': ''}) }}
+      {{ m.campo(form.email, opcional=True, type='email', autocomplete='email') }}
+    </div>
+    {{ m.campo(form.observacoes, opcional=True, ajuda='Condições, o que está incluído, prazos…', rows=4) }}
+    <div class="formulario-acoes">
+      <button type="submit" class="botao botao-primario">{{ m.icone('check') }}Salvar</button>
+      <a class="botao botao-texto" href="{{ url_for('fornecedores.lista') }}">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

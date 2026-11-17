@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block corpo %}
+<main id="conteudo" class="pagina-erro">
+  <a class="marca" href="{{ url_for('painel.inicio') }}" style="margin-bottom:40px"><span class="marca-simbolo">{{ m.icone('aneis') }}</span><span>Aceito<em>!</em></span></a>
+  <div class="codigo">{% block codigo %}{% endblock %}</div>
+  {% block mensagem_erro %}{% endblock %}
+  <a class="botao botao-primario" href="{{ url_for('painel.inicio') }}">{{ m.icone('voltar') }}Voltar ao painel</a>
+</main>
+{% endblock %}

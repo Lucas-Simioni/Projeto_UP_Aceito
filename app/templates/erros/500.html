@@ -1,0 +1,4 @@
+{% extends 'erros/_layout.html' %}
+{% block titulo %}Erro inesperado{% endblock %}
+{% block codigo %}500{% endblock %}
+{% block mensagem_erro %}<h1>Algo deu errado</h1><p>{{ mensagem('E15') }}</p>{% endblock %}

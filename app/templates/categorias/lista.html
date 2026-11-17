@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block titulo %}Orçamento{% endblock %}
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <h1>Orçamento</h1>
+    <p>Quanto vocês planejam gastar em cada categoria e quanto já foi contratado e pago.</p>
+  </div>
+  <div class="acoes">
+    <a class="botao botao-primario" href="{{ url_for('categorias.nova') }}">{{ m.icone('mais') }}Nova categoria</a>
+  </div>
+</div>
+
+<section class="grade grade-4" aria-label="Totais do orçamento" style="margin-bottom:16px">
+  <div class="cartao indicador">
+    <div class="indicador-rotulo">Orçamento total</div>
+    <div class="indicador-valor">{{ casamento.orcamento_total|moeda }}</div>
+    <div class="indicador-detalhe"><a href="{{ url_for('casamento.editar') }}">Alterar</a></div>
+  </div>
+  <div class="cartao indicador">
+    <div class="indicador-rotulo">Planejado</div>
+    <div class="indicador-valor">{{ totais.planejado|moeda }}</div>
+    <div class="indicador-detalhe">
+      {% if totais.nao_alocado >= 0 %}{{ totais.nao_alocado|moeda }} ainda sem categoria{% else %}Acima do orçamento{% endif %}
+    </div>
+  </div>
+  <div class="cartao indicador">
+    <div class="indicador-rotulo">Contratado</div>
+    <div class="indicador-valor">{{ totais.contratado|moeda }}</div>
+    <div class="indicador-detalhe">Pago: {{ totais.pago|moeda }}</div>
+  </div>
+  <div class="cartao indicador indicador-destaque{% if casamento.orcamento_total - totais.contratado < 0 %} indicador-negativo{% endif %}">
+    <div class="indicador-rotulo">Ainda posso gastar</div>
+    <div class="indicador-valor">{{ (casamento.orcamento_total - totais.contratado)|moeda }}</div>
+    <div class="indicador-detalhe">Orçamento menos o contratado</div>
+  </div>
+</section>
+
+{% if orcamento_excedente is not none or planejado_excedente is not none %}
+<div class="alertas">
+  {% if orcamento_excedente is not none %}
+    <div class="alerta alerta-critico">{{ m.icone('alerta') }}<span class="alerta-texto">{{ mensagem('A02', valor=orcamento_excedente|moeda) }}</span></div>
+  {% endif %}
+  {% if planejado_excedente is not none %}
+    <div class="alerta alerta-atencao">{{ m.icone('alerta') }}<span class="alerta-texto">{{ mensagem('A04', valor=totais.planejado|moeda, orcamento=casamento.orcamento_total|moeda) }}</span></div>
+  {% endif %}
+</div>
+{% endif %}
+
+<div class="cartao">
+  {% if resumos %}
+  <div class="tabela-envoltorio">
+    <table class="tabela tabela-responsiva">
+      <thead>
+        <tr>
+          <th scope="col">Categoria</th>
+          <th scope="col" class="num">Planejado</th>
+          <th scope="col" class="num">Contratado</th>
+          <th scope="col" class="num">Pago</th>
+          <th scope="col">Uso do planejado</th>
+          <th scope="col"><span class="sr-only">Ações</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in resumos %}
+        <tr>
+          <td class="celula-titulo"><span class="principal">{{ r.nome }}</span>
+            <span class="secundario">{{ r.categoria.fornecedores|length }} fornecedor(es) · {{ r.categoria.despesas|length }} despesa(s)</span></td>
+          <td class="num" data-rotulo="Planejado">{{ r.planejado|moeda }}</td>
+          <td class="num" data-rotulo="Contratado">{{ r.contratado|moeda }}</td>
+          <td class="num" data-rotulo="Pago">{{ r.pago|moeda }}</td>
+          <td data-rotulo="Uso">{{ m.progresso(r) }}</td>
+          <td data-rotulo="Ações">
+            <div class="acoes-linha">
+              <a class="botao-icone" href="{{ url_for('categorias.editar', categoria_id=r.categoria.id) }}" title="Editar" aria-label="Editar {{ r.nome }}">{{ m.icone('editar') }}</a>
+              {{ m.botao_excluir(url_for('categorias.excluir', categoria_id=r.categoria.id), 'a categoria ' ~ r.nome) }}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td class="celula-titulo">Total</td>
+          <td class="num" data-rotulo="Planejado">{{ totais.planejado|moeda }}</td>
+          <td class="num" data-rotulo="Contratado">{{ totais.contratado|moeda }}</td>
+          <td class="num" data-rotulo="Pago">{{ totais.pago|moeda }}</td>
+          <td colspan="2"></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  {% else %}
+    {{ m.vazio('carteira', 'Nenhuma categoria ainda', 'Crie categorias para dividir o orçamento, como Buffet ou Fotografia.',
+               url_for('categorias.nova'), 'Nova categoria') }}
+  {% endif %}
+</div>
+<p class="suave pequeno" style="margin-top:12px">Situação: abaixo de 90% do planejado = dentro do planejado; de 90% a 100% = atenção; acima de 100% = acima do planejado.</p>
+{% endblock %}

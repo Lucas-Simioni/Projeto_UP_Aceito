@@ -1,0 +1,116 @@
+{# Componentes reutilizáveis das telas. #}
+
+{% set _ICONES = {
+  'aneis': '<circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/>',
+  'painel': '<rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>',
+  'carteira': '<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
+  'maleta': '<rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+  'recibo': '<path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/>',
+  'calendario': '<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/>',
+  'pessoas': '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  'coracao': '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
+  'sair': '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
+  'mais': '<path d="M5 12h14"/><path d="M12 5v14"/>',
+  'fechar': '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  'menu': '<path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/>',
+  'editar': '<path d="M12 20h9"/><path d="M16.38 3.62a1 1 0 0 1 3 3L7.37 18.64a2 2 0 0 1-.86.5l-2.87.84a.5.5 0 0 1-.62-.62l.84-2.87a2 2 0 0 1 .5-.86z"/>',
+  'lixeira': '<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  'baixar': '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/>',
+  'check': '<path d="M20 6 9 17l-5-5"/>',
+  'alerta': '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  'info': '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+  'check-circulo': '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+  'erro': '<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>',
+  'estornar': '<path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>',
+  'comparar': '<path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>',
+  'voltar': '<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
+  'local': '<path d="M20 10c0 4.99-5.54 10.19-7.4 11.8a1 1 0 0 1-1.2 0C9.54 20.19 4 14.99 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+  'moeda': '<circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/>',
+  'relogio': '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  'estrela': '<path d="M11.52 2.3a.53.53 0 0 1 .95 0l2.31 4.68a2.12 2.12 0 0 0 1.6 1.16l5.16.76a.53.53 0 0 1 .3.9l-3.74 3.64a2.12 2.12 0 0 0-.61 1.88l.88 5.14a.53.53 0 0 1-.77.56l-4.62-2.43a2.12 2.12 0 0 0-1.97 0L6.4 21.01a.53.53 0 0 1-.77-.56l.88-5.13a2.12 2.12 0 0 0-.61-1.88L2.16 9.8a.53.53 0 0 1 .3-.9l5.16-.76a2.12 2.12 0 0 0 1.6-1.16z"/>',
+  'olho': '<path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/>',
+} %}
+
+{% macro icone(nome, classe='') -%}
+<svg class="icone {{ classe }}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">{{ _ICONES[nome]|safe }}</svg>
+{%- endmacro %}
+
+{% macro selo(texto, tom=None) -%}
+<span class="selo selo-{{ tom or (texto|tom) }}">{{ texto }}</span>
+{%- endmacro %}
+
+{# Campo de formulário com rótulo, ajuda e erro ao lado do campo (RNF03, UC07 4a). #}
+{% macro campo(field, moeda=False, opcional=False, ajuda=None) -%}
+{% set tem_erro = field.errors|length > 0 %}
+{% set id_ajuda = field.id ~ '-ajuda' %}
+{% set id_erro = field.id ~ '-erro' %}
+{% set descritores = [] %}
+{% if ajuda or field.description %}{% set _ = descritores.append(id_ajuda) %}{% endif %}
+{% if tem_erro %}{% set _ = descritores.append(id_erro) %}{% endif %}
+<div class="campo{% if tem_erro %} com-erro{% endif %}">
+  <label for="{{ field.id }}">{{ field.label.text }}{% if opcional %} <span class="opcional">(opcional)</span>{% endif %}</label>
+  {% set atributos = kwargs %}
+  {% if descritores %}{% set _ = atributos.update({'aria-describedby': descritores|join(' ')}) %}{% endif %}
+  {% if tem_erro %}{% set _ = atributos.update({'aria-invalid': 'true'}) %}{% endif %}
+  {% if moeda %}
+    {% set _ = atributos.update({'data-moeda': '', 'inputmode': 'decimal', 'autocomplete': 'off', 'placeholder': '0,00'}) %}
+    <div class="campo-moeda"><span aria-hidden="true">R$</span>{{ field(**atributos) }}</div>
+  {% else %}
+    {{ field(**atributos) }}
+  {% endif %}
+  {% if ajuda or field.description %}<span class="ajuda" id="{{ id_ajuda }}">{{ ajuda or field.description }}</span>{% endif %}
+  {% if tem_erro %}
+    <span class="erro-campo" id="{{ id_erro }}">{{ icone('erro') }}<span>{{ field.errors|first }}</span></span>
+  {% endif %}
+</div>
+{%- endmacro %}
+
+{% macro vazio(icone_nome, titulo, texto, acao_url=None, acao_texto=None, compacto=False) -%}
+<div class="vazio{% if compacto %} vazio-compacto{% endif %}">
+  <div class="vazio-icone">{{ icone(icone_nome) }}</div>
+  <h2>{{ titulo }}</h2>
+  <p>{{ texto }}</p>
+  {% if acao_url %}<a class="botao botao-primario" href="{{ acao_url }}">{{ icone('mais') }}{{ acao_texto }}</a>{% endif %}
+</div>
+{%- endmacro %}
+
+{# Botão de excluir com confirmação C01 (RF15). #}
+{% macro botao_excluir(url, item) -%}
+<form method="post" action="{{ url }}" data-confirmar="{{ mensagem('C01', item=item) }}">
+  {{ form_acao.csrf_token }}
+  <button type="submit" class="botao-icone perigo" title="Excluir" aria-label="Excluir {{ item }}">{{ icone('lixeira') }}</button>
+</form>
+{%- endmacro %}
+
+{% macro progresso(resumo) -%}
+{% set tom = resumo.situacao|tom %}
+{% set largura = [resumo.percentual or (100 if resumo.contratado > 0 else 0), 100]|min %}
+<div class="progresso">
+  <div class="progresso-trilho" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+       aria-valuenow="{{ largura }}" aria-label="{{ resumo.nome }}: {{ resumo.percentual if resumo.percentual is not none else '—' }}% do planejado">
+    <div class="progresso-barra {{ tom }}" style="width: {{ largura }}%"></div>
+  </div>
+  <div class="progresso-legenda">
+    <span>{{ resumo.percentual ~ '%' if resumo.percentual is not none else 'Sem planejado' }}</span>
+    {{ selo(resumo.situacao) }}
+  </div>
+</div>
+{%- endmacro %}
+
+{# Botão Pagar: abre a janela de pagamento (JS) ou, sem JS, a tela de pagamento. #}
+{% macro botao_pagar(parcela, proximo, classe='botao botao-secundario botao-pequeno') -%}
+<a class="{{ classe }}" href="{{ url_for('parcelas.pagar', parcela_id=parcela.id, proximo=proximo) }}"
+   data-pagar="{{ url_for('parcelas.pagar', parcela_id=parcela.id, proximo=proximo) }}"
+   data-descricao="{{ parcela.despesa.descricao }} — parcela {{ parcela.numero }} de {{ parcela.despesa.num_parcelas }}"
+   data-valor="{{ parcela.valor|moeda }}" data-vencimento="{{ parcela.data_vencimento|data_br }}"
+   data-minimo="{{ parcela.despesa.data_contratacao.isoformat() }}">Pagar</a>
+{%- endmacro %}
+
+{% macro botao_estornar(parcela, proximo) -%}
+<form method="post" action="{{ url_for('parcelas.estornar', parcela_id=parcela.id, proximo=proximo) }}"
+      data-confirmar="Estornar o pagamento da parcela {{ parcela.numero }} de “{{ parcela.despesa.descricao }}”? Ela voltará a ficar em aberto."
+      data-confirmar-botao="Estornar">
+  {{ form_acao.csrf_token }}
+  <button type="submit" class="botao botao-texto botao-pequeno">{{ icone('estornar', 'icone-pequeno') }}Estornar</button>
+</form>
+{%- endmacro %}

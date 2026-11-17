@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block titulo %}Painel{% endblock %}
+{% block conteudo %}
+{% set p = painel %}
+
+<section class="saudacao" aria-label="Casamento">
+  <div>
+    <h1>{{ casamento.nome_casal }}</h1>
+    <p class="local">{{ m.icone('calendario', 'icone-pequeno') }}{{ casamento.data_casamento|data_br }}{% if casamento.local %} · {{ casamento.local }}{% endif %}</p>
+  </div>
+  <div class="contagem">
+    {% if p.dias_restantes > 0 %}
+      <span class="contagem-numero">{{ p.dias_restantes }}</span>
+      <span class="contagem-texto"><strong>{{ 'dia' if p.dias_restantes == 1 else 'dias' }} para o “aceito”</strong><span>{{ 'Falta' if p.dias_restantes == 1 else 'Faltam' }} {{ p.dias_restantes }} {{ 'dia' if p.dias_restantes == 1 else 'dias' }}</span></span>
+    {% elif p.dias_restantes == 0 %}
+      <span class="contagem-numero">{{ m.icone('coracao') }}</span>
+      <span class="contagem-texto"><strong>É hoje!</strong><span>Felicidades ao casal</span></span>
+    {% else %}
+      <span class="contagem-numero">{{ m.icone('check') }}</span>
+      <span class="contagem-texto"><strong>Casamento realizado</strong><span>há {{ -p.dias_restantes }} dias</span></span>
+    {% endif %}
+  </div>
+</section>
+
+<section class="grade grade-4" aria-label="Resumo financeiro">
+  <div class="cartao indicador">
+    <div class="indicador-rotulo">{{ m.icone('carteira', 'icone-pequeno') }}Orçamento</div>
+    <div class="indicador-valor">{{ p.orcamento_total|moeda }}</div>
+    <div class="indicador-detalhe">Planejado nas categorias: {{ p.total_planejado|moeda }}</div>
+  </div>
+  <div class="cartao indicador">
+    <div class="indicador-rotulo">{{ m.icone('recibo', 'icone-pequeno') }}Contratado</div>
+    <div class="indicador-valor">{{ p.total_contratado|moeda }}</div>
+    <div class="indicador-detalhe">Soma das despesas registradas</div>
+  </div>
+  <div class="cartao indicador">
+    <div class="indicador-rotulo">{{ m.icone('check-circulo', 'icone-pequeno') }}Pago</div>
+    <div class="indicador-valor">{{ p.total_pago|moeda }}</div>
+    <div class="indicador-detalhe">Falta pagar {{ (p.total_contratado - p.total_pago)|moeda }}</div>
+  </div>
+  <div class="cartao indicador indicador-destaque{% if p.saldo < 0 %} indicador-negativo{% endif %}">
+    <div class="indicador-rotulo">{{ m.icone('moeda', 'icone-pequeno') }}Ainda posso gastar</div>
+    <div class="indicador-valor">{{ p.saldo|moeda }}</div>
+    <div class="indicador-detalhe">Orçamento menos o contratado</div>
+  </div>
+</section>
+
+<div class="painel-secoes">
+  {% if p.alertas %}
+  <section class="alertas" aria-label="Alertas">
+    {% for alerta in p.alertas %}
+      <div class="alerta alerta-{{ alerta.tom }}">
+        {{ m.icone('alerta') }}
+        <span class="alerta-texto">{{ alerta.texto }}</span>
+        {% if alerta.destino %}<a href="{{ url_for(alerta.destino, filtro='atrasadas') if alerta.codigo == 'A05' else url_for(alerta.destino) }}">Ver</a>{% endif %}
+      </div>
+    {% endfor %}
+  </section>
+  {% endif %}
+
+  <div class="grade grade-painel">
+    <section class="cartao bloco-grafico" aria-labelledby="titulo-grafico">
+      <div class="cartao-cabecalho">
+        <h2 id="titulo-grafico">Gastos por categoria</h2>
+        <a href="{{ url_for('categorias.lista') }}">Ver orçamento</a>
+      </div>
+      {% if p.tem_gastos %}
+        <div class="grafico-area">
+          <canvas id="grafico-categorias" role="img"
+                  aria-label="Gráfico de barras com o valor planejado e o contratado de cada categoria. Os mesmos dados estão na tabela a seguir."
+                  data-grafico='{{ p.grafico|tojson }}'></canvas>
+        </div>
+        <table class="sr-only">
+          <caption>Planejado e contratado por categoria</caption>
+          <thead><tr><th>Categoria</th><th>Planejado</th><th>Contratado</th><th>Situação</th></tr></thead>
+          <tbody>
+            {% for c in p.categorias %}
+              <tr><td>{{ c.nome }}</td><td>{{ c.planejado|moeda }}</td><td>{{ c.contratado|moeda }}</td><td>{{ c.situacao }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        {{ m.vazio('carteira', 'Defina quanto quer gastar em cada categoria',
+                   'Com os valores planejados, o gráfico compara o que foi planejado com o que já foi contratado.',
+                   url_for('categorias.lista'), 'Definir valores', compacto=True) }}
+      {% endif %}
+    </section>
+
+    <section class="cartao bloco-parcelas" aria-labelledby="titulo-parcelas">
+      <div class="cartao-cabecalho">
+        <h2 id="titulo-parcelas">Próximas parcelas</h2>
+        <a href="{{ url_for('parcelas.lista', filtro='pendentes') }}">Ver todas ({{ p.total_parcelas_abertas }})</a>
+      </div>
+      {% if p.proximas_parcelas %}
+        <ul class="lista-parcelas">
+          {% for parcela in p.proximas_parcelas %}
+            {% set situacao = parcela.situacao(hoje) %}
+            <li>
+              <span class="data"><strong>{{ '%02d'|format(parcela.data_vencimento.day) }}</strong><span>{{ (parcela.data_vencimento|data_curta)[3:] }}</span></span>
+              <span class="info">
+                <strong>{{ parcela.despesa.descricao }}</strong>
+                <span>{{ parcela.despesa.categoria.nome }} · {{ parcela.numero }}/{{ parcela.despesa.num_parcelas }}</span>
+              </span>
+              <span class="lado">
+                <span class="valor">{{ parcela.valor|moeda }}</span>
+                <span class="linha-acao">{{ m.selo(situacao) }}{{ m.botao_pagar(parcela, url_for('painel.index')) }}</span>
+              </span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        {{ m.vazio('calendario', 'Nenhuma parcela em aberto',
+                   'Ao registrar uma despesa, as parcelas aparecem aqui em ordem de vencimento.',
+                   url_for('despesas.nova'), 'Registrar despesa', compacto=True) }}
+      {% endif %}
+    </section>
+  </div>
+</div>
+
+<section class="cartao faixa-convidados" aria-label="Resumo dos convidados">
+  <span class="item">{{ m.icone('pessoas', 'icone-pequeno') }}<strong>{{ p.convidados.pessoas_confirmadas }}</strong><span>pessoas confirmadas</span></span>
+  <span class="item"><strong>{{ p.convidados.pendentes }}</strong><span>pendentes</span></span>
+  <span class="item"><strong>{{ p.convidados.recusados }}</strong><span>recusados</span></span>
+  <span class="item"><strong>{{ p.custo_por_convidado|moeda }}</strong><span>custo por convidado</span></span>
+  <a href="{{ url_for('convidados.lista') }}">Ver convidados</a>
+</section>
+{% endblock %}
+
+{% block scripts %}
+{% if painel.tem_gastos %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+<script src="{{ url_for('static', filename='js/grafico.js') }}" defer></script>
+{% endif %}
+{% endblock %}

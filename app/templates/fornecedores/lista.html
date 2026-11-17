@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block titulo %}Fornecedores{% endblock %}
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <h1>Fornecedores</h1>
+    <p>Orçamentos recebidos, contratados e descartados, por categoria.</p>
+  </div>
+  <div class="acoes">
+    <a class="botao botao-secundario" href="{{ url_for('fornecedores.comparar', categoria=filtro_categoria) }}">{{ m.icone('comparar') }}Comparar orçamentos</a>
+    <a class="botao botao-primario" href="{{ url_for('fornecedores.novo', categoria=filtro_categoria) }}">{{ m.icone('mais') }}Novo fornecedor</a>
+  </div>
+</div>
+
+<form class="barra-filtros" method="get" data-autoenvio>
+  <div class="campo">
+    <label for="filtro-categoria">Categoria</label>
+    <select id="filtro-categoria" name="categoria">
+      <option value="">Todas</option>
+      {% for c in categorias %}<option value="{{ c.id }}"{% if c.id == filtro_categoria %} selected{% endif %}>{{ c.nome }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="campo">
+    <label for="filtro-status">Status</label>
+    <select id="filtro-status" name="status">
+      <option value="">Todos</option>
+      {% for valor, rotulo in status_opcoes %}<option value="{{ valor }}"{% if valor == filtro_status %} selected{% endif %}>{{ rotulo }}</option>{% endfor %}
+    </select>
+  </div>
+  <noscript><button class="botao botao-secundario" type="submit">Filtrar</button></noscript>
+</form>
+
+<div class="cartao">
+  {% if fornecedores %}
+  <div class="tabela-envoltorio">
+    <table class="tabela tabela-responsiva">
+      <thead>
+        <tr>
+          <th scope="col">Fornecedor</th>
+          <th scope="col">Categoria</th>
+          <th scope="col" class="num">Valor orçado</th>
+          <th scope="col">Status</th>
+          <th scope="col"><span class="sr-only">Ações</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for f in fornecedores %}
+        <tr{% if f.status == 'DESCARTADO' %} class="linha-apagada"{% endif %}>
+          <td class="celula-titulo">
+            <span class="principal">{{ f.nome }}</span>
+            {% if f.telefone or f.email %}<span class="secundario">{{ [f.telefone, f.email]|select|join(' · ') }}</span>{% endif %}
+          </td>
+          <td data-rotulo="Categoria">{{ f.categoria.nome }}</td>
+          <td class="num" data-rotulo="Valor orçado">{{ f.valor_orcado|moeda }}</td>
+          <td data-rotulo="Status">{{ m.selo(f.status_rotulo) }}</td>
+          <td data-rotulo="Ações">
+            <div class="acoes-linha">
+              {% if f.aceita_despesa() %}
+                <a class="botao botao-texto botao-pequeno" href="{{ url_for('despesas.nova', fornecedor=f.id) }}">Registrar despesa</a>
+              {% endif %}
+              <a class="botao-icone" href="{{ url_for('fornecedores.editar', fornecedor_id=f.id) }}" title="Editar" aria-label="Editar {{ f.nome }}">{{ m.icone('editar') }}</a>
+              {{ m.botao_excluir(url_for('fornecedores.excluir', fornecedor_id=f.id), 'o fornecedor ' ~ f.nome) }}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% elif filtro_categoria or filtro_status %}
+    {{ m.vazio('maleta', 'Nenhum fornecedor com esses filtros', 'Tente outra categoria ou status.', compacto=True) }}
+  {% else %}
+    {{ m.vazio('maleta', 'Nenhum fornecedor cadastrado',
+               'Cadastre os orçamentos que vocês receberam para comparar valores e não perder nenhum contato.',
+               url_for('fornecedores.novo'), 'Novo fornecedor') }}
+  {% endif %}
+</div>
+{% endblock %}

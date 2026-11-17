@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block titulo %}Convidados{% endblock %}
+{% block conteudo %}
+<div class="cabecalho-pagina">
+  <div>
+    <h1>Convidados</h1>
+    <p>Registre as respostas com um clique. Acompanhantes contam como pessoas confirmadas.</p>
+  </div>
+  <div class="acoes">
+    <a class="botao botao-secundario" href="{{ url_for('convidados.exportar', grupo=filtros.grupo, status=filtros.status) }}">{{ m.icone('baixar') }}Exportar CSV</a>
+    <a class="botao botao-primario" href="{{ url_for('convidados.novo') }}">{{ m.icone('mais') }}Novo convidado</a>
+  </div>
+</div>
+
+<section class="grade grade-5" aria-label="Resumo dos convidados" style="margin-bottom:16px">
+  <div class="cartao indicador">
+    <div class="indicador-rotulo">Convites</div>
+    <div class="indicador-valor">{{ resumo.cadastrados }}</div>
+    <div class="indicador-detalhe">{{ resumo.pessoas_convidadas }} pessoas{% if estimados %} · estimado {{ estimados }}{% endif %}</div>
+  </div>
+  <div class="cartao indicador indicador-destaque">
+    <div class="indicador-rotulo">Pessoas confirmadas</div>
+    <div class="indicador-valor">{{ resumo.pessoas_confirmadas }}</div>
+    <div class="indicador-detalhe">{{ resumo.confirmados }} convite(s) confirmado(s)</div>
+  </div>
+  <div class="cartao indicador">
+    <div class="indicador-rotulo">Pendentes</div>
+    <div class="indicador-valor">{{ resumo.pendentes }}</div>
+    <div class="indicador-detalhe">Aguardando resposta</div>
+  </div>
+  <div class="cartao indicador">
+    <div class="indicador-rotulo">Recusados</div>
+    <div class="indicador-valor">{{ resumo.recusados }}</div>
+    <div class="indicador-detalhe">Não poderão ir</div>
+  </div>
+  <div class="cartao indicador">
+    <div class="indicador-rotulo">Custo por convidado</div>
+    <div class="indicador-valor">{{ custo|moeda }}</div>
+    <div class="indicador-detalhe">Contratado ÷ confirmados</div>
+  </div>
+</section>
+
+<form class="barra-filtros" method="get" data-autoenvio>
+  <div class="campo">
+    <label for="filtro-grupo">Grupo</label>
+    <select id="filtro-grupo" name="grupo">
+      <option value="">Todos</option>
+      {% for valor, rotulo in grupos %}<option value="{{ valor }}"{% if valor == filtros.grupo %} selected{% endif %}>{{ rotulo }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="campo">
+    <label for="filtro-status">Confirmação</label>
+    <select id="filtro-status" name="status">
+      <option value="">Todas</option>
+      {% for valor, rotulo in status_opcoes %}<option value="{{ valor }}"{% if valor == filtros.status %} selected{% endif %}>{{ rotulo }}</option>{% endfor %}
+    </select>
+  </div>
+  <noscript><button class="botao botao-secundario" type="submit">Filtrar</button></noscript>
+</form>
+
+<div class="cartao">
+  {% if convidados %}
+  <div class="tabela-envoltorio">
+    <table class="tabela tabela-responsiva">
+      <thead>
+        <tr>
+          <th scope="col">Nome</th>
+          <th scope="col">Grupo</th>
+          <th scope="col">Pessoas</th>
+          <th scope="col">Confirmação</th>
+          <th scope="col"><span class="sr-only">Ações</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in convidados %}
+        <tr id="convidado-{{ c.id }}">
+          <td class="celula-titulo">
+            <span class="principal">{{ c.nome }}</span>
+            {% if c.telefone or c.email %}<span class="secundario">{{ [c.telefone, c.email]|select|join(' · ') }}</span>{% endif %}
+          </td>
+          <td data-rotulo="Grupo">{{ c.grupo_rotulo }}</td>
+          <td data-rotulo="Pessoas">{{ c.total_pessoas() }}{% if c.acompanhantes %} <span class="apagado pequeno">(+{{ c.acompanhantes }})</span>{% endif %}</td>
+          <td data-rotulo="Confirmação">
+            <div class="rsvp" role="group" aria-label="Confirmação de {{ c.nome }}">
+              <form method="post" action="{{ url_for('convidados.rsvp', convidado_id=c.id) }}">
+                {{ form_acao.csrf_token }}
+                <input type="hidden" name="filtro_grupo" value="{{ filtros.grupo or '' }}">
+                <input type="hidden" name="filtro_status" value="{{ filtros.status or '' }}">
+                {% for valor, rotulo in status_opcoes %}
+                  <button type="submit" name="status" value="{{ valor }}" class="{{ valor }}"
+                          aria-pressed="{{ 'true' if c.status_rsvp == valor else 'false' }}">{{ rotulo }}</button>
+                {% endfor %}
+              </form>
+            </div>
+          </td>
+          <td data-rotulo="Ações">
+            <div class="acoes-linha">
+              <a class="botao-icone" href="{{ url_for('convidados.editar', convidado_id=c.id) }}" title="Editar" aria-label="Editar {{ c.nome }}">{{ m.icone('editar') }}</a>
+              {{ m.botao_excluir(url_for('convidados.excluir', convidado_id=c.id), 'o convidado ' ~ c.nome) }}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% elif filtros.grupo or filtros.status %}
+    {{ m.vazio('pessoas', 'Nenhum convidado com esses filtros', 'Tente outro grupo ou status.', compacto=True) }}
+  {% else %}
+    {{ m.vazio('pessoas', 'A lista de convidados está vazia',
+               'Cadastre os convidados e registre as respostas: o Aceito! calcula quantas pessoas vão e o custo por convidado.',
+               url_for('convidados.novo'), 'Novo convidado') }}
+  {% endif %}
+</div>
+{% endblock %}

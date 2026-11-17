@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block titulo %}{{ despesa.descricao }}{% endblock %}
+{% block conteudo %}
+{% set aqui = url_for('despesas.detalhe', despesa_id=despesa.id) %}
+<a class="voltar" href="{{ url_for('despesas.lista') }}">{{ m.icone('voltar', 'icone-pequeno') }}Despesas</a>
+<div class="cabecalho-pagina">
+  <div>
+    <h1>{{ despesa.descricao }}</h1>
+    <p>{{ despesa.categoria.nome }} · {{ despesa.fornecedor.nome if despesa.fornecedor else 'Sem fornecedor' }} · {{ m.selo(despesa.situacao(hoje)) }}</p>
+  </div>
+  <div class="acoes">
+    <a class="botao botao-secundario" href="{{ url_for('despesas.editar', despesa_id=despesa.id) }}">{{ m.icone('editar') }}Editar</a>
+    <form method="post" action="{{ url_for('despesas.excluir', despesa_id=despesa.id) }}"
+          data-confirmar="{{ mensagem('C01', item='a despesa “' ~ despesa.descricao ~ '”') }}">
+      {{ form_acao.csrf_token }}
+      <button type="submit" class="botao botao-secundario">{{ m.icone('lixeira') }}Excluir</button>
+    </form>
+  </div>
+</div>
+
+<section class="cartao" aria-label="Resumo da despesa" style="margin-bottom:16px">
+  <dl class="ficha" style="margin:0">
+    <div><dt>Valor total</dt><dd>{{ despesa.valor_total|moeda }}</dd></div>
+    <div><dt>Pago</dt><dd>{{ despesa.total_pago()|moeda }}</dd></div>
+    <div><dt>Parcelas pagas</dt><dd>{{ despesa.parcelas_pagas }} de {{ despesa.num_parcelas }}</dd></div>
+    <div><dt>Contratação</dt><dd>{{ despesa.data_contratacao|data_br }}</dd></div>
+  </dl>
+</section>
+
+<section class="cartao" aria-labelledby="titulo-parcelas">
+  <div class="cartao-cabecalho"><h2 id="titulo-parcelas">Parcelas</h2></div>
+  <div class="tabela-envoltorio">
+    <table class="tabela tabela-responsiva">
+      <thead>
+        <tr>
+          <th scope="col">Parcela</th>
+          <th scope="col">Vencimento</th>
+          <th scope="col" class="num">Valor</th>
+          <th scope="col">Situação</th>
+          <th scope="col">Pagamento</th>
+          <th scope="col"><span class="sr-only">Ações</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in despesa.parcelas %}
+        <tr>
+          <td class="celula-titulo"><span class="principal">{{ p.numero }}ª de {{ despesa.num_parcelas }}</span></td>
+          <td data-rotulo="Vencimento">{{ p.data_vencimento|data_br }}
+            {% if p.data_vencimento > casamento.data_casamento %}<span class="selo selo-atencao" title="Vence depois da data do casamento">Após o casamento</span>{% endif %}</td>
+          <td class="num" data-rotulo="Valor">{{ p.valor|moeda }}</td>
+          <td data-rotulo="Situação">{{ m.selo(p.situacao(hoje)) }}</td>
+          <td data-rotulo="Pagamento">{{ p.data_pagamento|data_br }}</td>
+          <td data-rotulo="Ações">
+            <div class="acoes-linha">
+              {% if p.paga %}{{ m.botao_estornar(p, aqui) }}{% else %}{{ m.botao_pagar(p, aqui) }}{% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block titulo %}{{ 'Editar convidado' if convidado else 'Novo convidado' }}{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{{ url_for('convidados.lista') }}">{{ m.icone('voltar', 'icone-pequeno') }}Convidados</a>
+<div class="cabecalho-pagina">
+  <div>
+    <h1>{{ 'Editar convidado' if convidado else 'Novo convidado' }}</h1>
+    <p>{{ 'A resposta (confirmado ou recusado) é registrada direto na lista.' if not convidado else 'Status atual: ' ~ convidado.status_rotulo ~ '.' }}</p>
+  </div>
+</div>
+<div class="cartao formulario">
+  <form method="post" class="cartao-corpo" novalidate>
+    {{ form.csrf_token }}
+    {{ m.campo(form.nome, autofocus=True, autocomplete='off') }}
+    <div class="campos-linha">
+      {{ m.campo(form.grupo) }}
+      {{ m.campo(form.acompanhantes, min=0, max=10, inputmode='numeric') }}
+    </div>
+    <div class="campos-linha">
+      {{ m.campo(form.telefone, opcional=True, ajuda='(99) 99999-9999', type='tel', **{'data-telefone': ''}) }}
+      {{ m.campo(form.email, opcional=True, type='email') }}
+    </div>
+    <div class="formulario-acoes">
+      <button type="submit" class="botao botao-primario">{{ m.icone('check') }}Salvar</button>
+      {% if not convidado %}
+        <button type="submit" class="botao botao-secundario" name="continuar" value="1">Salvar e cadastrar outro</button>
+      {% endif %}
+      <a class="botao botao-texto" href="{{ url_for('convidados.lista') }}">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

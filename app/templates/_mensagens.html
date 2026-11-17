@@ -1,0 +1,16 @@
+{% import '_macros.html' as m with context %}
+{% with mensagens = get_flashed_messages(with_categories=true) %}
+  {% if mensagens %}
+  <div class="mensagens" role="status" aria-live="polite">
+    {% for categoria, texto in mensagens %}
+      {% set tipo = {'sucesso': 'ok', 'erro': 'critico', 'aviso': 'atencao'}.get(categoria, 'info') %}
+      {% set nome_icone = {'sucesso': 'check-circulo', 'erro': 'erro', 'aviso': 'alerta'}.get(categoria, 'info') %}
+      <div class="alerta alerta-{{ tipo }} mensagem" {% if categoria != 'erro' %}data-some{% endif %}>
+        {{ m.icone(nome_icone) }}
+        <span class="alerta-texto">{{ texto }}</span>
+        <button type="button" class="fechar" aria-label="Fechar mensagem" data-fechar>{{ m.icone('fechar', 'icone-pequeno') }}</button>
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+{% endwith %}

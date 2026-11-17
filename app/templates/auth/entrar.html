@@ -1,0 +1,14 @@
+{% extends 'auth/_layout.html' %}
+{% import '_macros.html' as m with context %}
+{% block titulo %}Entrar{% endblock %}
+{% block conteudo %}
+<h1>Bem-vindos de volta</h1>
+<p>Entre para ver como está o planejamento do casamento.</p>
+<form method="post" novalidate>
+  {{ form.csrf_token }}
+  {{ m.campo(form.email, autocomplete='email', autofocus=True) }}
+  {{ m.campo(form.senha, autocomplete='current-password') }}
+  <button type="submit" class="botao botao-primario botao-largo">Entrar</button>
+</form>
+<p class="acesso-alternativa">Ainda não tem conta? <a href="{{ url_for('auth.criar_conta') }}">Criar conta</a></p>
+{% endblock %}

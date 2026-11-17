@@ -1,0 +1,39 @@
+{% import '_macros.html' as m with context %}
+{# Janela de confirmação C01 (RF15), usada por todo formulário com data-confirmar. #}
+<dialog class="janela" id="janela-confirmar" aria-labelledby="janela-confirmar-titulo">
+  <div class="janela-corpo">
+    <h2 id="janela-confirmar-titulo">Confirmar</h2>
+    <p data-texto></p>
+  </div>
+  <div class="janela-acoes">
+    <button type="button" class="botao botao-secundario" data-cancelar>Cancelar</button>
+    <button type="button" class="botao botao-perigo" data-confirmar-ok>Excluir</button>
+  </div>
+</dialog>
+
+{# Janela de pagamento (UC09): sugere a data de hoje; o servidor valida a RN11 de novo. #}
+{% if current_user.is_authenticated and form_pagamento is defined %}
+<dialog class="janela" id="janela-pagar" aria-labelledby="janela-pagar-titulo">
+  <form method="post" action="">
+    {{ form_pagamento.csrf_token }}
+    <div class="janela-corpo">
+      <h2 id="janela-pagar-titulo">Registrar pagamento</h2>
+      <div class="resumo-parcela">
+        <strong data-descricao></strong><br>
+        <span class="suave">Valor <strong class="numero" data-valor></strong> · vence em <span data-vencimento></span></span>
+      </div>
+      <div class="campo">
+        <label for="janela-data-pagamento">Data do pagamento</label>
+        <input type="date" id="janela-data-pagamento" name="data_pagamento" required
+               value="{{ form_pagamento.data_pagamento.data.isoformat() }}"
+               max="{{ form_pagamento.data_pagamento.data.isoformat() }}" aria-describedby="janela-data-ajuda">
+        <span class="ajuda" id="janela-data-ajuda">Não pode ser futura nem anterior à data de contratação.</span>
+      </div>
+    </div>
+    <div class="janela-acoes">
+      <button type="button" class="botao botao-secundario" data-cancelar>Cancelar</button>
+      <button type="submit" class="botao botao-primario">{{ m.icone('check') }}Confirmar pagamento</button>
+    </div>
+  </form>
+</dialog>
+{% endif %}

@@ -1,0 +1,66 @@
+<!doctype html>
+{% import '_macros.html' as m with context %}
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Aceito! — orçamento, fornecedores, parcelas e convidados do seu casamento num só lugar.">
+  <meta name="theme-color" content="#5E7D63">
+  <title>{% block titulo %}{% endblock %} · Aceito!</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg') }}" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  {% block cabeca %}{% endblock %}
+</head>
+<body>
+  <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+  {% block corpo %}
+  {% set secao = request.blueprint %}
+  <header class="topo">
+    <div class="conteiner">
+      <a class="marca" href="{{ url_for('painel.index') }}" aria-label="Aceito! — ir para o painel">
+        <span class="marca-simbolo">{{ m.icone('aneis') }}</span><span>Aceito<em>!</em></span>
+      </a>
+      <button type="button" class="botao-icone botao-menu" aria-controls="menu-principal" aria-expanded="false"
+              aria-label="Abrir menu" data-menu>{{ m.icone('menu') }}</button>
+      <nav class="menu" id="menu-principal" aria-label="Menu principal">
+        {% set itens = [
+          ('painel', 'painel.index', 'Painel', 'painel'),
+          ('categorias', 'categorias.lista', 'Orçamento', 'carteira'),
+          ('fornecedores', 'fornecedores.lista', 'Fornecedores', 'maleta'),
+          ('despesas', 'despesas.lista', 'Despesas', 'recibo'),
+          ('parcelas', 'parcelas.lista', 'Parcelas', 'calendario'),
+          ('convidados', 'convidados.lista', 'Convidados', 'pessoas'),
+        ] %}
+        {% for bp, endpoint, rotulo, nome_icone in itens %}
+          <a href="{{ url_for(endpoint) }}"{% if secao == bp %} aria-current="page"{% endif %}>{{ m.icone(nome_icone) }}{{ rotulo }}</a>
+        {% endfor %}
+        <span class="menu-separador" aria-hidden="true"></span>
+        <a href="{{ url_for('casamento.editar') }}"{% if secao == 'casamento' %} aria-current="page"{% endif %}>{{ m.icone('coracao') }}Meu casamento</a>
+        <form method="post" action="{{ url_for('auth.sair') }}">
+          {{ form_acao.csrf_token }}
+          <button type="submit">{{ m.icone('sair') }}Sair</button>
+        </form>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <div class="conteiner">
+      {% include '_mensagens.html' %}
+      {% block conteudo %}{% endblock %}
+    </div>
+  </main>
+
+  <footer class="rodape">
+    <div class="conteiner">Aceito! · organização financeira do seu casamento</div>
+  </footer>
+  {% endblock %}
+
+  {% include '_dialogos.html' %}
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

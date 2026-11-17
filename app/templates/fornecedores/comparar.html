@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block titulo %}Comparar orçamentos{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{{ url_for('fornecedores.lista') }}">{{ m.icone('voltar', 'icone-pequeno') }}Fornecedores</a>
+<div class="cabecalho-pagina">
+  <div>
+    <h1>Comparar orçamentos</h1>
+    <p>Fornecedores da mesma categoria lado a lado, do menor para o maior valor.</p>
+  </div>
+</div>
+
+<form class="barra-filtros" method="get" data-autoenvio>
+  <div class="campo">
+    <label for="comparar-categoria">Categoria</label>
+    <select id="comparar-categoria" name="categoria">
+      {% for c in categorias %}
+        <option value="{{ c.id }}"{% if categoria and c.id == categoria.id %} selected{% endif %}>{{ c.nome }} ({{ c.fornecedores|length }})</option>
+      {% endfor %}
+    </select>
+  </div>
+  <noscript><button class="botao botao-secundario" type="submit">Comparar</button></noscript>
+  {% if categoria %}
+  <div class="empurrar">
+    <span class="selo selo-info">Planejado para {{ categoria.nome }}: {{ categoria.valor_planejado|moeda }}</span>
+  </div>
+  {% endif %}
+</form>
+
+{% if itens %}
+<div class="comparacao">
+  {% for item in itens %}
+    {% set f = item.fornecedor %}
+    <article class="cartao oferta{% if item.menor %} oferta-menor{% endif %}{% if f.status == 'DESCARTADO' %} oferta-descartada{% endif %}">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <span class="oferta-posicao">{{ loop.index }}º</span>
+        {% if item.menor %}<span class="selo selo-ok">Menor orçamento</span>{% else %}{{ m.selo(f.status_rotulo) }}{% endif %}
+      </div>
+      <h2>{{ f.nome }}</h2>
+      <div>
+        <div class="oferta-valor">{{ f.valor_orcado|moeda }}</div>
+        <div class="oferta-diferenca">
+          {% if item.diferenca is not none %}+{{ item.diferenca|moeda }} ({{ item.percentual }}% a mais que o menor)
+          {% elif f.valor_orcado is none %}Sem valor informado
+          {% elif item.menor %}Status: {{ f.status_rotulo }}
+          {% else %}Descartado{% endif %}
+        </div>
+      </div>
+      {% if item.cabe_no_planejado is not none %}
+        <div>{% if item.cabe_no_planejado %}<span class="selo selo-ok">Cabe no planejado</span>{% else %}<span class="selo selo-critico">Acima do planejado</span>{% endif %}</div>
+      {% endif %}
+      {% if f.observacoes %}<p class="observacoes">{{ f.observacoes }}</p>{% endif %}
+      <div class="oferta-rodape">
+        {% if f.aceita_despesa() %}<a class="botao botao-primario botao-pequeno" href="{{ url_for('despesas.nova', fornecedor=f.id) }}">{{ 'Nova despesa' if f.status == 'CONTRATADO' else 'Contratar' }}</a>{% endif %}
+        <a class="botao botao-secundario botao-pequeno" href="{{ url_for('fornecedores.editar', fornecedor_id=f.id) }}">Editar</a>
+      </div>
+    </article>
+  {% endfor %}
+</div>
+{% else %}
+<div class="cartao">
+  {{ m.vazio('comparar', 'Nada para comparar nesta categoria',
+             'Cadastre pelo menos dois fornecedores com valor orçado para ver a comparação.',
+             url_for('fornecedores.novo', categoria=categoria.id if categoria else None), 'Novo fornecedor') }}
+</div>
+{% endif %}
+{% endblock %}

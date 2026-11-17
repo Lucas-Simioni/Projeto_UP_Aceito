@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as m with context %}
+{% block titulo %}Parcelas{% endblock %}
+{% block conteudo %}
+{% set aqui = url_for('parcelas.lista', filtro=filtro) %}
+<div class="cabecalho-pagina">
+  <div>
+    <h1>Parcelas</h1>
+    <p>Todos os vencimentos, do mais próximo ao mais distante.</p>
+  </div>
+  <div class="acoes">
+    <a class="botao botao-secundario" href="{{ url_for('parcelas.exportar', filtro=filtro) }}">{{ m.icone('baixar') }}Exportar CSV</a>
+  </div>
+</div>
+
+<nav class="abas" aria-label="Filtrar parcelas">
+  {% for chave, rotulo in filtros.items() %}
+    <a class="aba" href="{{ url_for('parcelas.lista', filtro=chave) }}"{% if chave == filtro %} aria-current="page"{% endif %}>
+      {{ rotulo }} <span class="contador">{{ contagens[chave] }}</span>
+    </a>
+  {% endfor %}
+</nav>
+
+<div class="cartao">
+  {% if parcelas %}
+  <div class="tabela-envoltorio">
+    <table class="tabela tabela-responsiva">
+      <thead>
+        <tr>
+          <th scope="col">Despesa</th>
+          <th scope="col">Parcela</th>
+          <th scope="col">Vencimento</th>
+          <th scope="col" class="num">Valor</th>
+          <th scope="col">Situação</th>
+          <th scope="col">Pagamento</th>
+          <th scope="col"><span class="sr-only">Ações</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in parcelas %}
+        <tr id="parcela-{{ p.id }}">
+          <td class="celula-titulo">
+            <a class="principal" href="{{ url_for('despesas.detalhe', despesa_id=p.despesa.id) }}">{{ p.despesa.descricao }}</a>
+            <span class="secundario">{{ p.despesa.categoria.nome }}</span>
+          </td>
+          <td data-rotulo="Parcela">{{ p.numero }}/{{ p.despesa.num_parcelas }}</td>
+          <td data-rotulo="Vencimento">
+            {{ p.data_vencimento|data_br }}
+            {% if p.data_vencimento > casamento.data_casamento %}<span class="selo selo-atencao" title="Vence depois da data do casamento">Após o casamento</span>{% endif %}
+          </td>
+          <td class="num" data-rotulo="Valor">{{ p.valor|moeda }}</td>
+          <td data-rotulo="Situação">{{ m.selo(p.situacao(hoje)) }}</td>
+          <td data-rotulo="Pagamento">{{ p.data_pagamento|data_br }}</td>
+          <td data-rotulo="Ações">
+            <div class="acoes-linha">
+              {% if p.paga %}{{ m.botao_estornar(p, aqui) }}{% else %}{{ m.botao_pagar(p, aqui) }}{% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% elif contagens['todas'] %}
+    {{ m.vazio('check-circulo', 'Nenhuma parcela neste filtro', 'Tudo em ordem por aqui.', compacto=True) }}
+  {% else %}
+    {{ m.vazio('calendario', 'Nenhuma parcela ainda', 'As parcelas são geradas automaticamente quando vocês registram uma despesa.',
+               url_for('despesas.nova'), 'Registrar despesa') }}
+  {% endif %}
+</div>
+{% endblock %}

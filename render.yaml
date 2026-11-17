@@ -1,0 +1,20 @@
+# Blueprint do Render (RNF10): aplicação web gratuita com HTTPS.
+# O PostgreSQL fica no Neon ou no Supabase; copie a connection string para DATABASE_URL no painel do Render.
+services:
+  - type: web
+    name: aceito
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    # Aplica as migrações pendentes e sobe o Gunicorn.
+    startCommand: flask --app run db upgrade && gunicorn run:app --workers 2 --timeout 60
+    healthCheckPath: /entrar
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: APP_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
