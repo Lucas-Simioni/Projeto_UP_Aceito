@@ -5,13 +5,21 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent
-load_dotenv(BASE_DIR / ".env")
+# Credenciais ficam no arquivo .env (fora do Git) ou nas variáveis de ambiente do servidor.
+# override=False: uma variável já definida no sistema (ex.: no painel do Render) vale mais que o .env.
+load_dotenv(BASE_DIR / ".env", override=False)
 
 CHAVE_DESENVOLVIMENTO = "dev-chave-insegura-troque-em-producao"
 
 
+def variavel(nome: str, padrao: str | None = None) -> str | None:
+    """Lê uma variável de ambiente; valor vazio (ex.: `SECRET_KEY=` no .env) conta como não definido."""
+    valor = os.environ.get(nome, "").strip()
+    return valor or padrao
+
+
 def _url_banco(padrao: str) -> str:
-    url = os.environ.get("DATABASE_URL", padrao)
+    url = variavel("DATABASE_URL", padrao)
     # Alguns provedores ainda entregam o prefixo antigo "postgres://".
     if url.startswith("postgres://"):
         url = url.replace("postgres://", "postgresql://", 1)
@@ -19,7 +27,7 @@ def _url_banco(padrao: str) -> str:
 
 
 class Config:
-    SECRET_KEY = os.environ.get("SECRET_KEY", CHAVE_DESENVOLVIMENTO)
+    SECRET_KEY = variavel("SECRET_KEY", CHAVE_DESENVOLVIMENTO)
     SQLALCHEMY_DATABASE_URI = _url_banco(f"sqlite:///{BASE_DIR / 'instance' / 'aceito.db'}")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}

@@ -6,12 +6,16 @@ from flask import Flask, render_template, request
 from flask_wtf.csrf import CSRFError
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from config import CHAVE_DESENVOLVIMENTO, configs
+from config import CHAVE_DESENVOLVIMENTO, configs, variavel
 from app.extensions import csrf, db, login_manager, migrate
+
+TAMANHO_MINIMO_CHAVE = 32
 
 
 def create_app(nome_config: str | None = None) -> Flask:
-    nome_config = nome_config or os.environ.get("APP_ENV", "development")
+    nome_config = nome_config or variavel("APP_ENV", "development")
+    if nome_config not in configs:
+        raise RuntimeError(f"APP_ENV inválido: {nome_config!r}. Use development, testing ou production.")
     app = Flask(__name__)
     app.config.from_object(configs[nome_config])
     _validar_configuracao_producao(app, nome_config)
@@ -40,9 +44,11 @@ def create_app(nome_config: str | None = None) -> Flask:
 def _validar_configuracao_producao(app: Flask, nome_config: str) -> None:
     if nome_config != "production":
         return
-    if app.config["SECRET_KEY"] == CHAVE_DESENVOLVIMENTO:
-        raise RuntimeError("Defina a variável de ambiente SECRET_KEY em produção.")
-    if not os.environ.get("DATABASE_URL"):
+    chave = app.config["SECRET_KEY"]
+    if chave == CHAVE_DESENVOLVIMENTO or len(chave) < TAMANHO_MINIMO_CHAVE:
+        raise RuntimeError("Defina a variável de ambiente SECRET_KEY em produção "
+                           f"(valor aleatório com pelo menos {TAMANHO_MINIMO_CHAVE} caracteres).")
+    if not variavel("DATABASE_URL"):
         raise RuntimeError("Defina a variável de ambiente DATABASE_URL em produção.")
 
 

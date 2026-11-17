@@ -71,13 +71,20 @@ Resultado atual: **168 testes passando**, cobertura de **98% em `app/services`**
 3. Informe a variável `DATABASE_URL` com a connection string do passo 1. `SECRET_KEY` é gerada pelo próprio Render.
 4. A cada deploy o Render executa `flask db upgrade` (migrações) e sobe o Gunicorn. O HTTPS é fornecido pelo Render.
 
-Variáveis de ambiente:
+### Credenciais e variáveis de ambiente
+
+As credenciais nunca ficam no código. A aplicação lê tudo de variáveis de ambiente ([`config.py`](config.py)):
+
+- **No computador:** num arquivo `.env` na raiz do projeto, criado a partir do modelo [`.env.example`](.env.example). O `.gitignore` impede que qualquer `.env` vá para o GitHub; só o modelo, sem valores, é versionado.
+- **No Render:** no painel do serviço (*Environment*). Uma variável definida no sistema tem prioridade sobre o `.env`.
 
 | Variável | Uso |
 |---|---|
 | `APP_ENV` | `development` (padrão) ou `production` |
-| `SECRET_KEY` | assina sessão e tokens CSRF — obrigatória em produção |
-| `DATABASE_URL` | PostgreSQL em produção; vazio = SQLite local |
+| `SECRET_KEY` | assina sessão e tokens CSRF; em produção é obrigatória, com pelo menos 32 caracteres |
+| `DATABASE_URL` | PostgreSQL (Neon/Supabase); em branco no desenvolvimento = SQLite local |
+
+Em produção a aplicação **não sobe** sem `SECRET_KEY` forte e sem `DATABASE_URL`, para nunca rodar com a chave de desenvolvimento.
 
 ## Estrutura
 

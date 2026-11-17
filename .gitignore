@@ -1,7 +1,10 @@
-# Ambiente e segredos
+# Ambiente e segredos: nenhum arquivo .env vai para o GitHub, exceto o modelo .env.example
 .venv/
 venv/
 .env
+.env.*
+*.env
+!.env.example
 
 # Banco local de desenvolvimento
 instance/
