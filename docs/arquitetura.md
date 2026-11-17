@@ -73,7 +73,7 @@ No SQLite (desenvolvimento e testes), `PRAGMA foreign_keys=ON` é ligado em cada
 | D13 | Situação de categoria com planejado e contratado zerados | “Dentro do planejado”. | Não há gasto acima de nada. |
 | D14 | Fuso horário | “Hoje” é calculado em America/Sao_Paulo. | O servidor do Render roda em UTC; à noite as datas mudariam de dia. |
 | D15 | CSV | Separador `;`, vírgula decimal e BOM UTF-8. | Abre corretamente no Excel em português. |
-| D16 | Cor amarela (#B26A00) em texto | Usada em barras, ícones e bordas; o texto dos selos usa um tom mais escuro (#8A5300). | #B26A00 sobre fundo claro tem contraste 4,2:1, abaixo do mínimo AA de 4,5:1 (RNF03). |
+| D16 | Cor amarela (#B26A00) em texto | Usada em barras, ícones e bordas; o texto dos selos usa um tom mais escuro (#7A4A00, ver seção 6). | #B26A00 sobre fundo claro tem contraste 4,2:1, abaixo do mínimo AA de 4,5:1 (RNF03). |
 | D17 | Validação de nome de categoria duplicado | Comparação sem diferenciar maiúsculas/minúsculas. | Evita “Buffet” e “buffet” como categorias diferentes. |
 
 ## 5. Rastreabilidade (requisito → código → teste)
@@ -92,3 +92,49 @@ No SQLite (desenvolvimento e testes), `PRAGMA foreign_keys=ON` é ligado em cada
 | RF15 | `templates/_macros.html` (`botao_excluir`), `static/js/app.js` | inspeção manual (janela de confirmação C01) |
 | RNF08 | `controllers/comum.py` | TI03, `test_rnf08_*` (14 casos) |
 | RNF09 | consultas com carregamento antecipado (`selectinload`) | `test_rnf09_*` (500 convidados, 200 parcelas) |
+
+## 6. Identidade visual: evolução da seção 15
+
+A primeira versão seguia a seção 15 ao pé da letra (verde-sálvia #5E7D63, fundo #FAF8F5, texto #2B2B2B, fonte Inter).
+Funcionava, mas tinha cara de painel administrativo genérico: nada dizia "casamento". A revisão mantém o verde como
+cor principal e as cores de situação, e dá ao app uma identidade de **papelaria de casamento**, inspirada no convite
+impresso: papel bom, tinta escura e um único acento.
+
+### Paleta
+
+| Papel | Antes (seção 15) | Agora | Motivo |
+|---|---|---|---|
+| Cor principal (botões, links, foco) | Sálvia #5E7D63 | Eucalipto #4F6B55 | O mesmo verde, mais escuro. Com texto branco o contraste sobe de 4,6:1 (no limite do AA) para 5,9:1. O sálvia #5E7D63 continua em ícones e preenchimentos. |
+| Fundo da página | #FAF8F5 (creme) | Névoa #F3F5F1 | Papel frio, levemente esverdeado, que combina com o eucalipto. O creme com serifa é o visual mais repetido em sites de casamento. |
+| Texto | #2B2B2B | Tinta #263027 | Tinta verde-escura, coerente com a cor principal (contraste de 12,5:1 sobre o fundo). |
+| Fios e bordas | #E7E2DA | Linho #DCE1D8 | Separam o conteúdo como num impresso. Os campos de formulário usam #8A958C (3,1:1, WCAG 1.4.11). |
+| Acento | — | Malva #8A5A72 | Tom de flor seca. Usado **só** na contagem regressiva, no "!" da marca, no fio do convite e no código das páginas de erro. |
+| Situações | #2E7D32 / #B26A00 / #C62828 | #2E7D32 / #B26A00 / #B3261E | Os mesmos tons nas barras e nos botões. O texto dos selos usa versões mais escuras (#276C2B, #7A4A00, #A3221B) para passar AA sobre o fundo claro de cada selo. |
+
+Todos os pares de texto e fundo foram conferidos pela fórmula de contraste da WCAG 2.1. O menor contraste de
+texto é 4,77:1 (texto apagado sobre o fundo) e o dos fios de foco e controles é ≥ 3:1.
+
+### Tipografia
+
+- **Marcellus** (serifa de inspiração lapidar, que lembra a gravação de um convite), só em títulos `h1`, na marca, na
+  contagem regressiva, no dia das próximas parcelas e no código das páginas de erro.
+- **Hanken Grotesk** no lugar da Inter para todo o resto. Foi escolhida porque os algarismos já vêm com largura fixa
+  (tabulares), o que deixa as colunas de valores em R$ alinhadas. Outras candidatas (como Albert Sans) têm algarismos
+  proporcionais e não oferecem a variante tabular.
+- Os cabeçalhos de tabela deixaram de usar caixa alta: rótulos em caixa normal são mais fáceis de ler.
+
+### Componentes e acessibilidade
+
+- **Convite do painel:** nomes do casal, data, local e contagem regressiva dentro de um fio duplo. O fio duplo aparece
+  só onde está "o evento": o convite do painel, o painel lateral de entrar/criar conta e as páginas de erro.
+- **Extrato:** os números principais (painel, orçamento, convidados) ficam numa folha só, dividida por fios, em vez de
+  cartões soltos e iguais.
+- **Selos de situação:** o texto continua escrito no selo ("Paga", "Atrasada", "Acima do planejado"…), e cada tom ganha
+  uma forma própria: ✓ ok, triângulo atenção, "!" crítico, anel neutro, traço descartado. A situação não depende só da cor.
+- **Gráfico:** o planejado é uma barra vazada com contorno (3,7:1) e o contratado uma barra cheia. As séries se
+  distinguem pela forma, e a tabela acessível com os mesmos dados continua no painel.
+- **Foco:** contorno de 2 px em eucalipto (`outline`, não `box-shadow`, para aparecer no modo de alto contraste do Windows).
+- **Sem JavaScript:** o menu do celular só recolhe quando a página marca `<html class="js">`. Sem JavaScript, ele aparece
+  aberto, empilhado abaixo da marca. Formulários, o botão Pagar (link para a tela de pagamento) e os filtros (botão
+  Filtrar em `<noscript>`) funcionam normalmente.
+- **Movimento:** as animações (mensagens e janela de diálogo) só rodam com `prefers-reduced-motion: no-preference`.
