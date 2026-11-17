@@ -13,28 +13,28 @@
   </div>
 </div>
 
-<section class="grade grade-5" aria-label="Resumo dos convidados" style="margin-bottom:16px">
-  <div class="cartao indicador">
+<section class="extrato extrato-5" aria-label="Resumo dos convidados">
+  <div class="indicador">
     <div class="indicador-rotulo">Convites</div>
     <div class="indicador-valor">{{ resumo.cadastrados }}</div>
     <div class="indicador-detalhe">{{ resumo.pessoas_convidadas }} pessoas{% if estimados %} · estimado {{ estimados }}{% endif %}</div>
   </div>
-  <div class="cartao indicador indicador-destaque">
+  <div class="indicador indicador-destaque">
     <div class="indicador-rotulo">Pessoas confirmadas</div>
     <div class="indicador-valor">{{ resumo.pessoas_confirmadas }}</div>
     <div class="indicador-detalhe">{{ resumo.confirmados }} convite(s) confirmado(s)</div>
   </div>
-  <div class="cartao indicador">
+  <div class="indicador">
     <div class="indicador-rotulo">Pendentes</div>
     <div class="indicador-valor">{{ resumo.pendentes }}</div>
     <div class="indicador-detalhe">Aguardando resposta</div>
   </div>
-  <div class="cartao indicador">
+  <div class="indicador">
     <div class="indicador-rotulo">Recusados</div>
     <div class="indicador-valor">{{ resumo.recusados }}</div>
     <div class="indicador-detalhe">Não poderão ir</div>
   </div>
-  <div class="cartao indicador">
+  <div class="indicador">
     <div class="indicador-rotulo">Custo por convidado</div>
     <div class="indicador-valor">{{ custo|moeda }}</div>
     <div class="indicador-detalhe">Contratado ÷ confirmados</div>

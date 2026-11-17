@@ -13,7 +13,7 @@
   <form method="post" class="cartao-corpo" novalidate>
     {{ form.csrf_token }}
     <input type="hidden" name="proximo" value="{{ voltar }}">
-    <dl class="ficha" style="margin:0 0 20px;grid-template-columns:repeat(3,minmax(0,1fr))">
+    <dl class="ficha ficha-3">
       <div><dt>Valor</dt><dd>{{ parcela.valor|moeda }}</dd></div>
       <div><dt>Vencimento</dt><dd>{{ parcela.data_vencimento|data_br }}</dd></div>
       <div><dt>Situação</dt><dd>{{ m.selo(parcela.situacao(hoje)) }}</dd></div>
