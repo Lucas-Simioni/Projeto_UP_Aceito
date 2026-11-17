@@ -2,13 +2,15 @@
 
 Sistema web para o casal organizar o **orçamento, os fornecedores, as despesas parceladas e a lista de convidados** do casamento num só lugar. O painel mostra a qualquer momento quanto foi planejado, contratado e pago, o que vence nos próximos dias e quantas pessoas confirmaram presença.
 
-> Projeto Integrador Transdisciplinar em Engenharia de Software II — Lucas Simioni
-> Documento de planejamento: [`docs/situacao-1-planejamento/`](docs/situacao-1-planejamento/)
+> Projeto Integrador Transdisciplinar em Engenharia de Software II · Lucas Batista Simioni
+> Documento de planejamento: [`documento-de-planejamento.pdf`](docs/situacao-1-planejamento/documento-de-planejamento.pdf)
 
 | | |
 |---|---|
 | Sistema publicado | https://aceito-ym5f.onrender.com |
-| Vídeo de apresentação | [`docs/situacao-2-desenvolvimento/video-1.md`](docs/situacao-2-desenvolvimento/) |
+| Vídeo de apresentação | [`docs/situacao-2-desenvolvimento/video-1.md`](docs/situacao-2-desenvolvimento/video-1.md) |
+| Vídeo das correções | [`docs/situacao-3-validacao/video-2.md`](docs/situacao-3-validacao/video-2.md) |
+| Laudo de qualidade | [`docs/situacao-3-validacao/laudo-de-qualidade.md`](docs/situacao-3-validacao/laudo-de-qualidade.md) |
 | Manual de uso | [`docs/situacao-2-desenvolvimento/manual-de-uso.md`](docs/situacao-2-desenvolvimento/manual-de-uso.md) |
 | Arquitetura e decisões | [`docs/arquitetura.md`](docs/arquitetura.md) |
 
@@ -58,11 +60,11 @@ Acesse <http://127.0.0.1:5000>.
 ## Testes
 
 ```bash
-pytest                                        # 168 testes (unitários e de integração)
+pytest                                        # 180 testes (unitários e de integração)
 pytest --cov=app/services --cov-report=term   # cobertura da camada de regras de negócio
 ```
 
-Resultado atual: **168 testes passando**, cobertura de **98% em `app/services`** (mínimo exigido: 80%, RNF11). Relatórios em [`docs/situacao-2-desenvolvimento/testes/`](docs/situacao-2-desenvolvimento/testes/).
+Resultado atual: **180 testes passando**, cobertura de **98% em `app/services`** (mínimo exigido: 80%, RNF11). Relatórios em [`docs/situacao-2-desenvolvimento/testes/`](docs/situacao-2-desenvolvimento/testes/).
 
 ## Publicação (Render + Neon/Supabase)
 
