@@ -20,6 +20,11 @@ def variavel(nome: str, padrao: str | None = None) -> str | None:
 
 def _url_banco(padrao: str) -> str:
     url = variavel("DATABASE_URL", padrao)
+    # O painel do Neon também mostra a string como comando: psql 'postgresql://...'. Colada assim
+    # (com "psql" e aspas), o SQLAlchemy não entende; aqui sobra só o endereço.
+    if url.startswith("psql "):
+        url = url[len("psql "):].strip()
+    url = url.strip("'\"").strip()
     # Alguns provedores ainda entregam o prefixo antigo "postgres://".
     if url.startswith("postgres://"):
         url = url.replace("postgres://", "postgresql://", 1)

@@ -23,6 +23,16 @@ def test_url_do_banco_vazia_usa_sqlite_e_prefixo_antigo_e_corrigido(monkeypatch)
     assert config._url_banco("x") == "postgresql://u:s@host/banco"
 
 
+@pytest.mark.parametrize("colado", [
+    "psql 'postgresql://u:s@host/banco?sslmode=require'",
+    "'postgresql://u:s@host/banco?sslmode=require'",
+    ' "postgresql://u:s@host/banco?sslmode=require" ',
+])
+def test_url_do_banco_colada_como_comando_psql_ou_com_aspas(monkeypatch, colado):
+    monkeypatch.setenv("DATABASE_URL", colado)
+    assert config._url_banco("x") == "postgresql://u:s@host/banco?sslmode=require"
+
+
 def _producao(monkeypatch, chave, url):
     monkeypatch.setattr(config.ProductionConfig, "SECRET_KEY", chave)
     monkeypatch.setattr(config.ProductionConfig, "SQLALCHEMY_DATABASE_URI", "sqlite:///:memory:")
