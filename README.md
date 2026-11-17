@@ -7,7 +7,7 @@ Sistema web para o casal organizar o **orçamento, os fornecedores, as despesas 
 
 | | |
 |---|---|
-| Sistema publicado | _[link do Render — preencher após a publicação]_ |
+| Sistema publicado | https://aceito-ym5f.onrender.com |
 | Vídeo de apresentação | [`docs/situacao-2-desenvolvimento/video-1.md`](docs/situacao-2-desenvolvimento/) |
 | Manual de uso | [`docs/situacao-2-desenvolvimento/manual-de-uso.md`](docs/situacao-2-desenvolvimento/manual-de-uso.md) |
 | Arquitetura e decisões | [`docs/arquitetura.md`](docs/arquitetura.md) |
